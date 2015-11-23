@@ -13,6 +13,11 @@ public class Nota {
 		this.nota = notaTeoria+notaPractica;
 	}
 	
+	Nota(float nota, String anoAcademico){
+		this.nota = nota;
+		this.anoAcademico = anoAcademico;
+	}
+	
 	public float getNota(){
 		return nota;
 	}
@@ -21,6 +26,9 @@ public class Nota {
 		return anoAcademico;
 	}
 	
+	public String toString(){
+		return anoAcademico+" "+Float.toString(nota);
+	}
 	public void setNotaPractica(float notaPractica){
 		this.notaPractica = notaPractica;
 		this.nota = this.notaPractica + this.notaTeoria;

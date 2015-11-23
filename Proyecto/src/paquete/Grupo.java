@@ -20,6 +20,10 @@ public class Grupo {
 		this.horaSalida.set(2015, 5, 23, Integer.parseInt(auxiliar[0]), Integer.parseInt(auxiliar[1]), 0);
 	}
 	
+	public Grupo(int identificador, char tipo){
+		this.identificador = identificador;
+		this.tipo = tipo;
+	}
 	public int getIdentificador(){
 		return identificador;
 	}

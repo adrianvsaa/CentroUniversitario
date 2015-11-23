@@ -1,6 +1,7 @@
 package paquete;
 
 import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 public abstract class Persona {
 	private String dni;
@@ -15,5 +16,8 @@ public abstract class Persona {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 	
-	
+	public String toString(){
+		SimpleDateFormat aux = new SimpleDateFormat("HH:mm");
+		return dni+"\n"+nombre+"\n"+apellidos+"\n"+aux.format(fechaNacimiento.getTime());
+	}
 }
