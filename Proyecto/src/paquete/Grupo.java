@@ -14,10 +14,8 @@ public class Grupo {
 		this.identificador = identificador;
 		this.tipo = tipo;
 		this.dia = dia;
-		String[] auxiliar = horaEntrada.split(":");
-		this.horaEntrada.set(2015, 5, 23, Integer.parseInt(auxiliar[0]), Integer.parseInt(auxiliar[1]), 0);
-		auxiliar = horaSalida.split(":");
-		this.horaSalida.set(2015, 5, 23, Integer.parseInt(auxiliar[0]), Integer.parseInt(auxiliar[1]), 0);
+		this.horaEntrada.set(2015, 5, 23, Integer.parseInt(horaEntrada), 0, 0);
+		this.horaSalida.set(2015, 5, 23, Integer.parseInt(horaSalida), 0, 0);
 	}
 	
 	public Grupo(int identificador, char tipo){
@@ -32,8 +30,21 @@ public class Grupo {
 		return tipo;
 	}
 	
+	public String salidaPersona(){
+		return tipo+Integer.toString(identificador);
+	}
+	
+	public String salidaAsignaturas(char tipo){
+		if(tipo==this.tipo){
+			SimpleDateFormat aux = new SimpleDateFormat("HH");
+			return Integer.toString(identificador)+" "+dia+" "+aux.format(horaEntrada.getTime())+" "+aux.format(horaSalida.getTime());
+		}
+		else
+			return null;
+	}
+	
 	public String toString(){
 		SimpleDateFormat aux = new SimpleDateFormat("HH:mm");
-		return Integer.toString(identificador)+tipo+dia+aux.format(horaEntrada.getTime())+aux.format(horaSalida.getTime());
+		return Integer.toString(identificador)+" "+tipo;
 	}
 }

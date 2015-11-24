@@ -15,9 +15,20 @@ public abstract class Persona {
 		this.apellidos = apellidos;
 		this.fechaNacimiento = fechaNacimiento;
 	}
+	public String getNombre(){
+		return nombre;
+	}
+	
+	public String getApellidos(){
+		return apellidos;
+	}
+	
+	public String getDNI(){
+		return dni;
+	}
 	
 	public String toString(){
-		SimpleDateFormat aux = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat aux = new SimpleDateFormat("dd:MM:YYYY");
 		return dni+"\n"+nombre+"\n"+apellidos+"\n"+aux.format(fechaNacimiento.getTime());
 	}
 }

@@ -4,7 +4,13 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
+import java.util.Set;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 public class Gestion {
 
@@ -14,11 +20,14 @@ public class Gestion {
 	
 	public static void main(String[] args) throws IOException{
 		leerArchivoPersonas();
-		System.out.println(mapaAlumnos.values());
+		leerArchivoAsignaturas();
+		if(!GestionErrores.existeArchivo("ejecucion.txt")){
+			
+		}
 	}
 	
 	public static void leerArchivoPersonas() throws IOException{
-		String archivo="personas.txt";
+		String archivo = "personas.txt";
 		if(!GestionErrores.existeArchivo(archivo)){
 			
 		}
@@ -51,7 +60,7 @@ public class Gestion {
 					String horas = entrada.nextLine();
 					String docenciaImpartida = entrada.nextLine();
 					Profesor p = new Profesor(dni.trim(), nombre.trim(), apellidos.trim(), fechaNacimiento, categoria, departamento, 
-							Integer.parseInt(horas));
+							Integer.parseInt(horas), docenciaImpartida);
 					mapaProfesores.put(dni, p);
 				}
 				if(entrada.hasNext())
@@ -69,10 +78,68 @@ public class Gestion {
 		else {
 			Scanner entrada = new Scanner(new FileInputStream(archivo));
 			while(entrada.hasNextLine()){
-				
+				String identificador = entrada.nextLine();
+				String nombre = entrada.nextLine();
+				String siglas = entrada.nextLine();
+				String curso = entrada.nextLine();
+				String coordinador = entrada.nextLine();
+				String preRequisitos = entrada.nextLine();
+				String gruposA = entrada.nextLine();
+				String gruposB = entrada.nextLine();
+				mapaAsignaturas.put(Integer.parseInt(identificador.trim()), new Asignatura(Integer.parseInt(identificador.trim()), nombre, siglas, 
+						Integer.parseInt(curso), coordinador.trim(), preRequisitos.trim(), gruposA.trim(), gruposB.trim()));
+				if(entrada.hasNext())
+					entrada.nextLine();
 			}
 			entrada.close();
 		}
+	}
+	
+	public static void editarArchivoAvisos(String aviso)throws IOException{
+		File fichero =new File("avisos.txt");
+		StringBuilder contenido = new StringBuilder();
+	    try {
+	      BufferedReader entrada =  new BufferedReader(new FileReader(fichero));
+	      try {
+	        String line = null; 
+	        while (( line = entrada.readLine()) != null){
+	          contenido.append(line);
+	          contenido.append(System.getProperty("line.separator"));
+	        }
+	      }
+	      finally {
+	        entrada.close();
+	      }
+	    }
+	    catch (IOException ex){
+	      ex.printStackTrace();
+	    }
+	    try{
+	    	BufferedWriter salida = new BufferedWriter(new FileWriter(fichero));
+	    	salida.write(aviso);
+	    	salida.close();
+	   }catch(IOException ax){
+	    	ax.printStackTrace();
+	    }
+	}
+	
+	public static void escribirMapas() throws IOException{
+		File fichero = new File("personas.txt");
+		File archivo = new File("asignaturas.txt");
+		BufferedWriter salida = new BufferedWriter(new FileWriter(fichero));
+		Set<String> keys = mapaAlumnos.keySet();
+		for(String key:keys){
+			salida.write(mapaAlumnos.get(key).salidaFichero());
+		}
+		keys = mapaProfesores.keySet();
+		for(String key:keys)
+			salida.write(mapaProfesores.get(key).salidaFichero());
+		salida.close();
+		salida = new BufferedWriter(new FileWriter(archivo));
+		Set<Integer> keys2 = mapaAsignaturas.keySet();
+		for(int key:keys2)
+			salida.write(mapaProfesores.get(key).salidaFichero());
+		salida.close();
 	}
 	
 }

@@ -3,6 +3,8 @@ package paquete;
 
 import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.Set;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 public class Alumno extends Persona{
@@ -28,8 +30,9 @@ public class Alumno extends Persona{
 			String aux[] = docenciaRecibida.split(";");
 			for(int i=0; i<aux.length; i++) {
 				String aux2[] = aux[i].trim().split(" ");
-				if(aux2.length==1)
-					this.docenciaRecibida.put(Integer.parseInt(aux2[0]), new Asignatura());
+				if(aux2.length==1){
+					this.docenciaRecibida.put(Integer.parseInt(aux2[0]), new Asignatura(Integer.parseInt(aux2[0])));
+				}
 				else {
 					if(this.docenciaRecibida.get(Integer.parseInt(aux2[0]))!=null){
 						this.docenciaRecibida.get(Integer.parseInt(aux2[0])).addGrupo(Integer.parseInt(aux2[2]), aux2[1].toCharArray()[0]);
@@ -41,11 +44,38 @@ public class Alumno extends Persona{
 				}
 			}
 		}
-		
+	}
+	
+	public void calcularNotaExpediente() throws IOException{
+		if(!GestionErrores.comprobarExpediente(asignaturasSuperadas)){
+			Gestion.editarArchivoAvisos(("El alumno"+super.getApellidos()+", "+super.getNombre()+" no tiene notas"));
+		}
+		Set<Integer> keys = asignaturasSuperadas.keySet();
+		int i=0;
+		float aux = 0;
+		for(Integer key:keys){
+			aux += asignaturasSuperadas.get(key).getNota();
+			i++;
+		}
+		this.notaExpediente = aux/i;
+		return;
+	}
+	
+	public String salidaFichero(){
+		SimpleDateFormat aux = new SimpleDateFormat("dd:MM:YYYY");
+		String auxiliarSuperadas = null;
+		Set<Integer> keys = asignaturasSuperadas.keySet();
+		for(int key:keys)
+			auxiliarSuperadas += Integer.toString(key)+asignaturasSuperadas.get(key).toString();
+		String auxiliarDocencia = null;
+		keys = docenciaRecibida.keySet();
+		for(int key:keys)
+			auxiliarDocencia += docenciaRecibida.get(key).salidaPersona();
+		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+auxiliarSuperadas+"\n"+auxiliarDocencia+"\n";
 	}
 	
 	public String toString(){
-		SimpleDateFormat aux = new SimpleDateFormat("HH:mm");
-		return super.toString()+aux.format(fechaIngreso.getTime());
+		SimpleDateFormat aux = new SimpleDateFormat("dd:MM:YYYY");
+		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+docenciaRecibida.values()+"\n"+asignaturasSuperadas+"\n";
 	}
 }
