@@ -31,16 +31,16 @@ public class Grupo {
 	}
 	
 	public String salidaPersona(){
-		return tipo+Integer.toString(identificador);
+		return tipo+" "+Integer.toString(identificador);
 	}
 	
 	public String salidaAsignaturas(char tipo){
 		if(tipo==this.tipo){
 			SimpleDateFormat aux = new SimpleDateFormat("HH");
-			return Integer.toString(identificador)+" "+dia+" "+aux.format(horaEntrada.getTime())+" "+aux.format(horaSalida.getTime());
+			return identificador+" "+dia+" "+aux.format(horaEntrada.getTime())+" "+aux.format(horaSalida.getTime());
 		}
 		else
-			return null;
+			return "";
 	}
 	
 	public String toString(){

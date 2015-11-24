@@ -62,20 +62,30 @@ public class Alumno extends Persona{
 	}
 	
 	public String salidaFichero(){
-		SimpleDateFormat aux = new SimpleDateFormat("dd:MM:YYYY");
-		String auxiliarSuperadas = null;
+		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
+		String auxiliarSuperadas = "";
 		Set<Integer> keys = asignaturasSuperadas.keySet();
-		for(int key:keys)
-			auxiliarSuperadas += Integer.toString(key)+asignaturasSuperadas.get(key).toString();
-		String auxiliarDocencia = null;
+		boolean ponercoma = false;
+		for(int key:keys){
+			if(ponercoma)
+				auxiliarSuperadas += "; ";
+			auxiliarSuperadas += key+" "+asignaturasSuperadas.get(key).toString();
+			ponercoma =true;
+		}
+		ponercoma = false;
+		String auxiliarDocencia = "";
 		keys = docenciaRecibida.keySet();
-		for(int key:keys)
+		for(int key:keys){
+			if(ponercoma)
+				auxiliarDocencia += "; ";
 			auxiliarDocencia += docenciaRecibida.get(key).salidaPersona();
-		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+auxiliarSuperadas+"\n"+auxiliarDocencia+"\n";
+			ponercoma = true;
+		}
+		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+auxiliarSuperadas+"\n"+auxiliarDocencia;
 	}
 	
 	public String toString(){
-		SimpleDateFormat aux = new SimpleDateFormat("dd:MM:YYYY");
+		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
 		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+docenciaRecibida.values()+"\n"+asignaturasSuperadas+"\n";
 	}
 }

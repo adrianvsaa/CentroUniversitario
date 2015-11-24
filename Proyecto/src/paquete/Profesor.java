@@ -33,10 +33,15 @@ public class Profesor extends Persona{
 	}
 	
 	public String salidaFichero(){
-		String auxiliarDocencia = null;
+		String auxiliarDocencia = "";
 		Set<Integer> keys = docenciaImpartida.keySet();
-		for(int key:keys)
+		boolean ponercoma = false;
+		for(int key:keys){
+			if(ponercoma)
+				auxiliarDocencia += "; ";
 			auxiliarDocencia += docenciaImpartida.get(key).salidaPersona();
+			ponercoma = true;
+		}
 		return super.toString()+"\n"+categoria+"\n"+departamento+"\n"+horasAsignables+"\n"+auxiliarDocencia;
 	}
 	

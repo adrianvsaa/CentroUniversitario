@@ -22,8 +22,9 @@ public class Gestion {
 		leerArchivoPersonas();
 		leerArchivoAsignaturas();
 		if(!GestionErrores.existeArchivo("ejecucion.txt")){
-			
+			System.out.println("La ejecucion termino");
 		}
+		escribirMapas();
 	}
 	
 	public static void leerArchivoPersonas() throws IOException{
@@ -128,17 +129,33 @@ public class Gestion {
 		File archivo = new File("asignaturas.txt");
 		BufferedWriter salida = new BufferedWriter(new FileWriter(fichero));
 		Set<String> keys = mapaAlumnos.keySet();
+		boolean ponerAsterisco = false;
 		for(String key:keys){
-			salida.write(mapaAlumnos.get(key).salidaFichero());
+			if(ponerAsterisco)
+				salida.write("\n*\n"+"alumno\n"+mapaAlumnos.get(key).salidaFichero());
+			else
+				salida.write("alumno\n"+mapaAlumnos.get(key).salidaFichero());
+			ponerAsterisco = true;
 		}
 		keys = mapaProfesores.keySet();
-		for(String key:keys)
-			salida.write(mapaProfesores.get(key).salidaFichero());
+		for(String key:keys) {
+			if(ponerAsterisco)
+				salida.write("\n*\n"+"profesor\n"+mapaProfesores.get(key).salidaFichero());
+			else
+				salida.write("profesor\n"+mapaProfesores.get(key).salidaFichero());
+			ponerAsterisco = true;
+		}
 		salida.close();
 		salida = new BufferedWriter(new FileWriter(archivo));
 		Set<Integer> keys2 = mapaAsignaturas.keySet();
-		for(int key:keys2)
-			salida.write(mapaProfesores.get(key).salidaFichero());
+		ponerAsterisco = false;
+		for(int key:keys2){
+			if(ponerAsterisco)
+				salida.write("\n*\n"+mapaAsignaturas.get(key).salidaFichero());
+			else
+				salida.write(mapaAsignaturas.get(key).salidaFichero());
+			ponerAsterisco = true;
+		}
 		salida.close();
 	}
 	

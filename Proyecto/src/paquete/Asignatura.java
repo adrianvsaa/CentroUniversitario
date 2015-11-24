@@ -59,37 +59,58 @@ public class Asignatura {
 	}
 	
 	public String salidaFichero(){
-		String auxRequisitos = null;
+		String auxRequisitos = "";
 		for(int i=0; i<requisitos.size(); i++){
-			auxRequisitos += Integer.toString(requisitos.get(i));
-			if((i+1)<requisitos.size())
-				auxRequisitos += ", ";
+			if(i>0)
+				auxRequisitos += ", "+Integer.toString(requisitos.get(i));
+			else
+				auxRequisitos = Integer.toString(requisitos.get(i));
 		}
-		String auxGruposA = null;
+		String auxGruposA = "";
+		boolean ponercoma = false;
 		for(int i=0; i<grupos.size(); i++){
-			auxGruposA += Integer.toString(identificador)+grupos.get(i).salidaAsignaturas('A');
+			if(grupos.get(i).getTipo()!='A')
+				continue;
+			if(ponercoma)
+				auxGruposA += "; "+grupos.get(i).salidaAsignaturas('A');
+			else {
+				auxGruposA = grupos.get(i).salidaAsignaturas('A');
+				ponercoma = true;
+			}
 		}
-		String auxGruposB = null;
+		String auxGruposB = "";
+		ponercoma = false;
 		for(int i=0; i<grupos.size(); i++){
-			auxGruposB += Integer.toString(identificador)+grupos.get(i).salidaAsignaturas('B');
+			if(grupos.get(i).getTipo()!='B')
+				continue;
+			if(ponercoma)
+				auxGruposB += "; "+grupos.get(i).salidaAsignaturas('B');
+			else {
+				auxGruposB = grupos.get(i).salidaAsignaturas('B');
+				ponercoma =true;
+			}
 		}
 		return Integer.toString(identificador)+"\n"+nombre+"\n"+siglas+"\n"+Integer.toString(curso)+"\n"+coordinador+"\n"+auxRequisitos+"\n"
-		+auxGruposA+"\n"+auxGruposB+"\n";
+		+auxGruposA+"\n"+auxGruposB;
 	}
 	
 	public String salidaPersona(){
 		if(grupos.size()>0){
-			String auxiliar = null;
+			String auxiliar = "";
+			boolean ponercoma = false;
 			for (int i=0; i<grupos.size(); i++){
-				auxiliar += Integer.toString(identificador)+grupos.get(i)+salidaPersona();
+				if(ponercoma)
+					auxiliar+= "; ";
+				auxiliar += Integer.toString(identificador)+" "+grupos.get(i).salidaPersona();
+				ponercoma = true;
 			}
 			return auxiliar;
 		}
 		else 
-			return null;
+			return Integer.toString(identificador);
 	}
 	
 	public String toString(){
-		return Integer.toString(identificador)+"\n"+nombre+"\n"+siglas+"\n"+coordinador+"\n"+grupos;
+		return grupos.toString();
 	}
 }

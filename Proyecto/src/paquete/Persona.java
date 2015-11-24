@@ -28,7 +28,7 @@ public abstract class Persona {
 	}
 	
 	public String toString(){
-		SimpleDateFormat aux = new SimpleDateFormat("dd:MM:YYYY");
+		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
 		return dni+"\n"+nombre+"\n"+apellidos+"\n"+aux.format(fechaNacimiento.getTime());
 	}
 }
