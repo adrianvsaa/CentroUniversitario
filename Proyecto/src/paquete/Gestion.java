@@ -24,6 +24,36 @@ public class Gestion {
 		if(!GestionErrores.existeArchivo("ejecucion.txt")){
 			System.out.println("La ejecucion termino");
 		}
+		else{
+			Scanner entradaInstrucciones = new Scanner(new FileInputStream("ejecucion.txt"));
+			while(entradaInstrucciones.hasNext()){
+				String[] instruccion = entradaInstrucciones	.nextLine()
+															.trim()
+															.split(" ");
+				switch(instruccion[0]){
+					case "InsertaPersona":
+						break;
+					case "AsignaCoordinador":
+						break;
+					case "AsignaCargaDocente":
+						break;
+					case "Matricula":
+						break;
+					case "AsignaGrupo":
+						break;
+					case "Evalua":
+						break;
+					case "Expediente":
+						break;
+					case "ObtenerCalendarioClases":
+						break;
+					default:
+						break;
+				}
+				
+			}
+			entradaInstrucciones.close();
+		}
 		escribirMapas();
 	}
 	
@@ -158,5 +188,6 @@ public class Gestion {
 		}
 		salida.close();
 	}
+
 	
 }

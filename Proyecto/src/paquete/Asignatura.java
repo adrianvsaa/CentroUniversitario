@@ -113,4 +113,8 @@ public class Asignatura {
 	public String toString(){
 		return grupos.toString();
 	}
+	
+	public int getIdentificador(){
+		return identificador;
+	}
 }

@@ -61,6 +61,26 @@ public class Alumno extends Persona{
 		return;
 	}
 	
+	public void matricula(Asignatura asignatura){
+		docenciaRecibida.put(asignatura.getIdentificador(), asignatura);
+		return;
+	}
+	
+	public void asignarGrupo(Asignatura asignatura, char tipoGrupo, int idGrupo){
+		docenciaRecibida.get(asignatura.getIdentificador()).addGrupo(idGrupo, tipoGrupo);
+		return;
+	}
+	
+	public void evaluar(int idAsignatura, Nota nota){
+		if(nota.getNota()>=5){
+			asignaturasSuperadas.put(idAsignatura, nota);
+			docenciaRecibida.remove(idAsignatura);
+		}
+		else
+			docenciaRecibida.remove(idAsignatura);
+		return;
+	}
+	
 	public String salidaFichero(){
 		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
 		String auxiliarSuperadas = "";
