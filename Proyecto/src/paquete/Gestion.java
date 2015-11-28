@@ -12,7 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-public class Gestion {
+public class Gestion{
 
 	static LinkedHashMap<String, Alumno> mapaAlumnos = new LinkedHashMap<String, Alumno>();
 	static LinkedHashMap<String, Profesor> mapaProfesores = new LinkedHashMap<String, Profesor>();
@@ -70,15 +70,9 @@ public class Gestion {
 				String dni = entrada.nextLine();
 				String nombre = entrada.nextLine();
 				String apellidos = entrada.nextLine();
-				String aux = entrada.nextLine();
-				String aux2[] = aux.split("/");
-				Calendar fechaNacimiento = Calendar.getInstance();
-				fechaNacimiento.set(Integer.parseInt(aux2[2]), Integer.parseInt(aux2[1]), Integer.parseInt(aux2[0]));
+				Calendar fechaNacimiento = stringToCalendar(entrada.nextLine());
 				if(auxiliar.equals("alumno")){
-					String aux1 = entrada.nextLine();
-					String aux21[] = aux1.split("/");
-					Calendar fechaIngreso = Calendar.getInstance();
-					fechaIngreso.set(Integer.parseInt(aux21[2]), Integer.parseInt(aux21[1]), Integer.parseInt(aux21[0]));
+					Calendar fechaIngreso = stringToCalendar(entrada.nextLine());
 					String asignaturasSuperadas = entrada.nextLine();
 					String docenciaRecibida = entrada.nextLine();
 					Alumno a = new Alumno(dni.trim(), nombre.trim(), apellidos.trim(), fechaNacimiento, fechaIngreso, docenciaRecibida, 
@@ -189,5 +183,59 @@ public class Gestion {
 		salida.close();
 	}
 
+	public static void insertarPersona(String[] comando) throws IOException{
+		try {
+			boolean insertar=true;
+			Calendar fecha = stringToCalendar(comando[5]);
+			if(!GestionErrores.comprobarDNI(comando[2])){
+				editarArchivoAvisos("DNI incorrecto");
+				insertar = false;
+			}
+			if(!GestionErrores.comprobarFecha(fecha)){
+				editarArchivoAvisos("Fecha Incorrecta");
+				insertar = false;
+			}
+			
+			if(comando[1].equals("alumno")){
+				Calendar fechaIngreso = stringToCalendar(comando[6]);
+				if(!GestionErrores.comprobarFechaIngreso(fechaIngreso, fecha)){
+					insertar = false;
+					editarArchivoAvisos("Fecha Incorrecta");
+				}
+				if(mapaAlumnos.get(comando[2])!=null){
+					insertar = false;
+					editarArchivoAvisos("Alumno ya existente");
+				}
+				if(insertar)
+					mapaAlumnos.put(comando[2], new Alumno(comando[2], comando[3], comando[4], fecha, fechaIngreso));
+			}
+			else{
+				if(!GestionErrores.comprobarHorasAsignables(Integer.parseInt(comando[7]), comando[5])){
+					insertar = false;
+					editarArchivoAvisos("Número de horas incorrecto");
+				}
+				if(mapaProfesores.get(comando[2])!=null){
+					insertar = false;
+					editarArchivoAvisos("Profesor ya existente");	
+				}
+				if(insertar)
+					mapaProfesores.put(comando[2], new Profesor(comando[2], comando[3], comando[4], fecha, comando[5], comando[6], Integer.parseInt(comando[5])));
+			}
+		}catch(Exception insertarPersona){
+			System.out.println("Error en ver persona");
+		}
+		return;
+	}
 	
+	public static Calendar stringToCalendar(String string){
+		String[] auxiliar = string.trim().split("/");
+		Calendar fecha = Calendar.getInstance();
+		try{
+			fecha.set(Integer.parseInt(auxiliar[2]), Integer.parseInt(auxiliar[1], Integer.parseInt(auxiliar[0])));
+		}catch(Exception time){
+			return null;
+		}
+		return fecha;
+		
+	}
 }

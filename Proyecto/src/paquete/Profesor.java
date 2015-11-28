@@ -10,6 +10,13 @@ public class Profesor extends Persona{
 	private int horasAsignables;
 	private LinkedHashMap<Integer, Asignatura> docenciaImpartida = new LinkedHashMap<Integer, Asignatura>();
 	
+	public Profesor(String dni, String nombre, String apellidos, Calendar fechaNacimiento, String categoria, String departamento, int horasAsignables){
+		super(dni, nombre, apellidos, fechaNacimiento);
+		this.categoria = categoria;
+		this.departamento = departamento;
+		this.horasAsignables = horasAsignables;
+	}
+	
 	public Profesor(String dni, String nombre, String apellidos, Calendar fechaNacimiento, String categoria, String departamento, int horasAsignables, 
 			String docenciaImpartida) {
 		super(dni, nombre, apellidos, fechaNacimiento);

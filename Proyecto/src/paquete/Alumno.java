@@ -13,6 +13,11 @@ public class Alumno extends Persona{
 	private LinkedHashMap<Integer, Asignatura> docenciaRecibida = new LinkedHashMap<Integer, Asignatura>();
 	private LinkedHashMap<Integer, Nota> asignaturasSuperadas = new LinkedHashMap<Integer, Nota>();
 	
+	public Alumno(String dni, String nombre, String apellidos, Calendar fechaNacimiento, Calendar fechaIngreso){
+		super(dni, nombre, apellidos, fechaNacimiento);
+		this.fechaIngreso = fechaIngreso;
+	}
+	
 	
 	public Alumno(String dni, String nombre, String apellidos, Calendar fechaNacimiento, Calendar fechaIngreso, String docenciaRecibida,
 			String asignaturasSuperadas) {

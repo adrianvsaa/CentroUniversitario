@@ -60,4 +60,31 @@ public class GestionErrores {
 			return false;
 		return true;
 	}
+	
+	public static boolean comprobarFechaIngreso(Calendar fechaIngreso, Calendar fecha){
+		int edadMaxima = 65, edadMinima = 15;
+		try{
+			fechaIngreso.setLenient(false);
+			fechaIngreso.getTime();
+		}catch(Exception time2){
+			return false;
+		}
+		double aux = (fechaIngreso.getTimeInMillis()/1000/60/60/24-fecha.getTimeInMillis()/1000/60/60/24)/365;
+		if(aux<edadMinima||aux>edadMaxima)
+			return false;
+		return true;
+	}
+	
+	public static boolean comprobarHorasAsignables(int horas, String tipoProfesor){
+		if(horas<0)
+			return false;
+		if(tipoProfesor.equals("titular")){
+			if(horas>20)
+				return false;
+		}
+		else
+			if(horas>15)
+				return false;
+		return true;
+	}
 }
