@@ -154,4 +154,11 @@ public class Alumno extends Persona{
 		else
 			return true;
 	}
+	
+	public boolean comprobarAprobado(int idAsignatura){
+		if(asignaturasSuperadas.get(idAsignatura)!=null)
+			return true;
+		return false;
+			
+	}
 }

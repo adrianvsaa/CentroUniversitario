@@ -41,6 +41,7 @@ public class Gestion{
 						asignarCargaDocente(instruccion.trim().split("\\s+"));
 						break;
 					case "Matricula":
+						matricularAlumno(instruccion.trim().split("\\s+"));
 						break;
 					case "AsignaGrupo":
 						break;
@@ -300,6 +301,32 @@ public class Gestion{
 		editarArchivoAvisos("OK");
 		
 		
+	}
+	
+	public static void matricularAlumno(String[] comando) throws IOException{
+		if(comando.length!=3){
+			editarArchivoAvisos("Numero de comandos Incorrecto");
+			return;
+		}
+		if(mapaAlumnos.get(comando[1].trim())==null){
+			editarArchivoAvisos("Alumno inexistente");
+			return;
+		}
+		if(mapaAsignaturas.get(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2]))==null){
+			editarArchivoAvisos("Asignatura Inexistente");
+			return;
+		}
+		if(mapaAlumnos.get(comando[1].trim()).comprobarMatricula(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2]))){
+			editarArchivoAvisos("Ya es alumno de la asignatura indicada");
+			return;
+		}
+		if(!GestionErrores.comprobarRequisitos(mapaAlumnos.get(comando[1]), mapaAsignaturas.get(Asignatura.siglasToIdentificador(mapaAsignaturas, 
+				comando[2])))){
+			editarArchivoAvisos("No cumple requisitos");
+			return;
+		}
+		mapaAlumnos.get(comando[1]).matricula(new Asignatura(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2])));
+		editarArchivoAvisos("OK");
 	}
 	
 	public static void evaluarAsignatura(String[] comando) throws IOException{

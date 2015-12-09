@@ -181,4 +181,8 @@ public class Asignatura {
 		return this.curso;
 	}
 	
+	public ArrayList<Integer> getRequisitos(){
+		return requisitos;
+	}
+	
 }

@@ -215,4 +215,15 @@ public class GestionErrores {
 		entrada.close();
 		return retorno;
 	}
+	
+	public static boolean comprobarRequisitos(Alumno alumno, Asignatura asignatura){
+		boolean retorno=true;
+		for(int i=0; i<asignatura.getRequisitos().size(); i++){
+			if(!alumno.comprobarAprobado(asignatura.getRequisitos().get(i))){
+				retorno = false;
+				break;
+			}
+		}
+		return retorno;
+	}
 }
