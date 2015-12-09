@@ -3,13 +3,18 @@ package paquete;
 
 import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Set;
+import java.util.List;
+import java.util.Collections;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 public class Alumno extends Persona{
 	private Calendar fechaIngreso = Calendar.getInstance();
-	private float notaExpediente;
 	private LinkedHashMap<Integer, Asignatura> docenciaRecibida = new LinkedHashMap<Integer, Asignatura>();
 	private LinkedHashMap<Integer, Nota> asignaturasSuperadas = new LinkedHashMap<Integer, Nota>();
 	
@@ -23,8 +28,8 @@ public class Alumno extends Persona{
 			String asignaturasSuperadas) {
 		super(dni, nombre, apellidos, fechaNacimiento);
 		this.fechaIngreso = fechaIngreso;
-		if(asignaturasSuperadas.length()!=0){
-			String aux[] = asignaturasSuperadas.split(";");
+		if(asignaturasSuperadas.trim().length()!=0){
+			String aux[] = asignaturasSuperadas.trim().split(";");
 			for(int i= 0; i<aux.length; i++){
 				String[] aux2 = aux[i].trim().split(" ");
 				Nota n = new Nota(Float.parseFloat(aux2[2]), aux2[1].trim());
@@ -51,7 +56,7 @@ public class Alumno extends Persona{
 		}
 	}
 	
-	public void calcularNotaExpediente() throws IOException{
+	public float calcularNotaExpediente() throws IOException{
 		if(!GestionErrores.comprobarExpediente(asignaturasSuperadas)){
 			Gestion.editarArchivoAvisos(("El alumno"+super.getApellidos()+", "+super.getNombre()+" no tiene notas"));
 		}
@@ -62,8 +67,7 @@ public class Alumno extends Persona{
 			aux += asignaturasSuperadas.get(key).getNota();
 			i++;
 		}
-		this.notaExpediente = aux/i;
-		return;
+		return aux/i;
 	}
 	
 	public void matricula(Asignatura asignatura){
@@ -76,7 +80,7 @@ public class Alumno extends Persona{
 		return;
 	}
 	
-	public void evaluar(int idAsignatura, Nota nota){
+	public void evaluarAsignatura(int idAsignatura, Nota nota){
 		if(nota.getNota()>=5){
 			asignaturasSuperadas.put(idAsignatura, nota);
 			docenciaRecibida.remove(idAsignatura);
@@ -112,5 +116,42 @@ public class Alumno extends Persona{
 	public String toString(){
 		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
 		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+docenciaRecibida.values()+"\n"+asignaturasSuperadas+"\n";
+	}
+	
+	public LinkedHashMap<Integer, Nota> getAsignaturasSuperadas(){
+		return asignaturasSuperadas;
+	}
+	
+	public void expediente(String fichero, LinkedHashMap<Integer, Asignatura> mapaAsignaturas)throws IOException{
+		File archivo = new File(fichero);
+		BufferedWriter salida = new BufferedWriter(new FileWriter(archivo));
+		Set<Integer> keys = asignaturasSuperadas.keySet();
+		for(int key:keys){
+			asignaturasSuperadas.get(key).setNombreAsignatura(mapaAsignaturas.get(key).getNombre());
+			asignaturasSuperadas.get(key).setCursoAsignatura(mapaAsignaturas.get(key).getCurso());
+		}
+		List<Nota> lista = new LinkedList<Nota>(asignaturasSuperadas.values());
+		Collections.sort(lista, new ComparadorNombre());
+		Collections.sort(lista);
+		for (int i = 0; i < lista.size(); i++) {
+			salida.write(lista.get(i).getCursoAsignatura()+" "+lista.get(i).getNombreAsignatura()+" "+ lista.get(i).getNota()+" "
+					+lista.get(i).getAnoAcademico()+"\n");
+		}
+		salida.close();
+	}
+	
+	public boolean comprobarEvaluacion(String anoAcademico, int idAsignatura){
+		if(asignaturasSuperadas.get(idAsignatura)==null)
+			return true;
+		if(asignaturasSuperadas.get(idAsignatura).getAnoAcademico().trim().equals(anoAcademico.trim()))
+			return false;
+		return true;
+	}
+	
+	public boolean comprobarMatricula(int idAsignatura){
+		if(docenciaRecibida.get(idAsignatura)==null)
+			return false;
+		else
+			return true;
 	}
 }

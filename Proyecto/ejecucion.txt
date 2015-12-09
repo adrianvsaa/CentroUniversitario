@@ -1,0 +1,136 @@
+******************************************************************************************************************************************
+*      PROFESOR:  InsertaPersona perfil dni nombre apellidos fecha1 [categoria] [departamento] [horasAsignables] 
+******************************************************************************************************************************************
+*     Avisos:
+*	Comando incorrecto 
+*	Numero de argumentos incorrecto
+*       Dni incorrecto
+* 	Fecha incorrecta
+* 	Numero de horas incorrecto
+*	OK
+* 
+InsertPersona profesor 34567210J "J Antonio"  "Álvarez González" asociado "Ingeniería Telemática"  20
+InsertaPersona profesor 34567210J "J Antonio  Álvarez González"   asociado "Ingeniería Telemática"  20
+*
+InsertaPersona profesor 34567210 " J Antonio"  "Álvarez González" asociado 10/02/1972   "Ingeniería Telemática"  20
+InsertaPersona profesor 34567210J "J Antonio"  "Álvarez González" asociado 10/02/2972   "Ingeniería Telemática"  20
+InsertaPersona profesor 34567210J  "J Antonio"  "Alvarez González" asociado 10/02/1972   "Ingeniería Telemática" 20
+InsertaPersona profesor 34567210J "J Antonio"  "Álvarez González" titular 10/02/1972   "Ingeniería Telemática"  20
+*
+***************************************************************************************************************************************
+*      AsignaCoordinador persona asignatura   
+***************************************************************************************************************************************
+*      Avisos:
+*	 Profesor inexistente
+* 	 Asignatura inexistente
+* 	 Profesor no titular 
+*	 OK
+* 	 Profesor ya es coordinador de 2 materias
+*
+AsignaCoordinador 12345678F PROG
+AsignaCoordinador 34567210J PROG
+AsignaCoordinador 37834521S CAL-II 
+AsignaCoordinador 34567210J RO 
+AsignaCoordinador 33218765X P-I
+*
+*******************************************************************************
+*      AsignaCargaDocente persona asignatura tipoGrupo grupo 
+*******************************************************************************
+*      Avisos:
+* 	   Tipo de grupo incorrecto
+* 	   Grupo inexistente
+* 	   Grupo ya asignado 
+* 	   Horas asignables superior al máximo
+* 	   OK
+*          Se genera solape
+*
+AsignaCargaDocente 34567210J RO C 2
+AsignaCargaDocente 34567210J RO A 3
+AsignaCargaDocente 34567210J P-II A 1
+AsignaCargaDocente 37834521S CAL-II A 3
+AsignaCargaDocente 34567210J P-II A 2
+AsignaCargaDocente 33218765X CD A 1
+*
+*****************************************************************************************
+*      ObtenerCalendarioClases profesor salida 
+*****************************************************************************************
+*      Avisos: 
+*            OK 
+*  
+ObtenerCalendarioClases 37834521S calendarioProfesor.txt 
+*
+******************************************************************************************
+*       ALUMNO: InsertaPersona perfil dni nombre apellidos fecha1 [fecha2]  
+******************************************************************************************
+*       Avisos:
+* 	    Numero de argumentos incorrecto
+* 	    Fecha de ingreso incorrecta
+*	    OK
+*
+InsertaPersona alumno 56432001H  "Cristian "  "Alonso Pérez"  15/10/1997  
+InsertaPersona alumno 56432001H  "Cristian "  "Alonso Pérez"  15/10/1997 15/09/2115   
+InsertaPersona alumno 56432001H  "Cristian "  " Alonso Pérez"  15/10/1997 02/09/2015   
+*
+**************************************************************************************
+*       AsignaGrupo alumno asignatura tipoGrupo grupo 
+**************************************************************************************
+*       Avisos:
+*            Numero de argumentos incorrecto
+*	     Alumno inexistente
+*	     Asignatura	inexistente 
+*	     Alumno no matriculado
+*	     Grupo inexistente
+*	     OK
+*            Se genera solape
+*
+AsignaGrupo 65432189G PROG 2
+AsignaGrupo 65432189G PROG A 2
+AsignaGrupo 56534219T PROG A 2
+AsignaGrupo 56534219T PE A 5
+AsignaGrupo 56534219T CAL-II B 7
+AsignaGrupo 56534219T CAL-II B 5
+AsignaGrupo 53456789J CD B 4
+*
+***********************************************************************************
+*       Matricula alumno asignatura 
+***********************************************************************************
+*       Avisos:
+* 	    Asignatura inexistente 
+* 	    Ya es alumno de la asignatura indicada
+*	    No cumple requisitos 
+*	    OK
+*
+Matricula 56432001H PROG 
+Matricula 56534219T CAL-II    
+Matricula 56534219T P-II
+Matricula 56534219T P-I
+*
+********************************************************************************************
+*       Evalua asignatura cursoAcademico fichero 
+********************************************************************************************
+*	Numero de argumentos incorrecto
+*	Asignatura inexistente	
+*	Fichero	de notas inexistente
+*       Asignatura ya evaluada en ese curso académico
+*       **Por linea de notas:          notas.txt
+* 	Alumno inexistente: <dni>      56431122Y 3 4
+*	Alumno no matriculado: <dni>   56432001H 4 3	  
+*	Nota grupo A/B incorrecta      56534219T 4 8
+*               OK-1                   56534219T 4 2    
+*
+Evalua PROG 
+Evalua PROG 15/16 notas.txt
+Evalua CAL-II 15/16 not.txt
+Evalua CAL-II 14/15 notas.txt
+Evalua CAL-II 15/16 notas.txt
+*
+*****************************************************************************************
+*      Expediente alumno salida 
+*****************************************************************************************
+*      Avisos: 
+*            Expediente vacío
+*            OK 
+*  
+Expediente 56432001H expedienteAlumno.txt 
+Expediente 51567824V expedienteAlumno.txt
+*

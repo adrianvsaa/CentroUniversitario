@@ -3,6 +3,7 @@ package paquete;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
+import java.util.Set;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,10 +21,10 @@ public class GestionErrores {
 	}
 	
 	public static boolean comprobarExpediente(LinkedHashMap<Integer, Nota> asignaturasSuperadas){
-		if(asignaturasSuperadas.size()>=0)
-			return true;
-		else
+		if(asignaturasSuperadas.size()==0)
 			return false;
+		else
+			return true;
 	}
 	
 	public static boolean comprobarDNI(String dni){
@@ -86,5 +87,132 @@ public class GestionErrores {
 			if(horas>15)
 				return false;
 		return true;
+	}
+	
+	public static boolean comprobarTitularidad(Profesor profesor){
+		if(profesor.getCategoria().equals("titular"))
+			return true;
+		return false;
+	}
+	
+	public static boolean comprobarAsignaturaSiglas(String siglas, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
+		int retorno = Asignatura.siglasToIdentificador(mapaAsignaturas, siglas);
+		if(retorno==0)
+			return false;
+		return true;
+	}
+	
+	public static boolean comprobarCoordinadorDos(String coordinador, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
+		boolean retorno=true;
+		Set<Integer> keys = mapaAsignaturas.keySet();
+		int veces = 0;
+		for(int key:keys){
+			if(mapaAsignaturas.get(key).getCoordinador().equals(coordinador)){
+				veces ++;
+			}
+			if(veces==2){
+				retorno = false;
+				break;
+			}
+		}
+		return retorno;
+	}
+	
+	public static boolean comprobarTipoGrupo(String tipo){
+		if(tipo.equals("A")||tipo.equals("B"))
+			return true;
+		return false;
+	}
+	
+	public static boolean comprobarExistenciaGrupo(Asignatura a, int idGrupo, char tipoGrupo){
+		if(a.comprobarGrupo(idGrupo, tipoGrupo))
+			return true;
+		return false;
+	}
+	
+	public static boolean comprobarAsignacionGrupo(LinkedHashMap<String, Profesor> mapaProfesores, int identificador, int idGrupo, char tipoGrupo){
+		boolean retorno = true;
+		Set<String> keys = mapaProfesores.keySet();
+		for(String key:keys){
+			if(!mapaProfesores.get(key).comprobarAsignacion(identificador, idGrupo, tipoGrupo)){
+				retorno = false;
+				break;
+			}
+		}
+		return retorno;
+	}
+	
+	public static boolean comprobarNumeroHoras(Profesor p, LinkedHashMap<Integer, Asignatura> mapaAsignaturas, int duracion){
+		if((p.getHorasImpartidas(mapaAsignaturas)+duracion)<=p.getHorasAsignables())
+			return true;
+		else
+			return false;
+		
+	}
+	
+	public static boolean comprobarSolapeProfesor(Asignatura a, Profesor p, int idGrupo, char tipoGrupo, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
+		if(p.comprobarHorario(a.getGrupo(idGrupo, tipoGrupo).getHoraEntrada(), a.getGrupo(idGrupo, tipoGrupo).getHoraSalida(),
+				a.getGrupo(idGrupo, tipoGrupo).getDia(), mapaAsignaturas))
+			return true;
+		else
+			return false;
+	}
+	
+	public static boolean comprobarDocencia(Profesor p){
+		if(p.comprobarDocenciaVacia())
+			return false;
+		else
+			return true;
+	}
+	
+	public static boolean comprobarEvaluacionAlumno(LinkedHashMap<String, Alumno> mapaAlumnos, String cursoAcademico, int idAsignatura){
+		boolean retorno = true;
+		Set<String> keys = mapaAlumnos.keySet();
+		for(String key: keys){
+			if(!mapaAlumnos.get(key).comprobarEvaluacion(cursoAcademico, idAsignatura)){
+				retorno = false;
+				break;
+			}
+		}
+		return retorno;
+	}
+	
+	public static boolean comprobarFicheroNotas(LinkedHashMap<String, Alumno> mapaAlumnos, String fichero, int idAsignatura, String anoAcademico)
+			throws IOException{
+		boolean retorno = true;
+		int i = 0;
+		Scanner entrada = new Scanner(new FileInputStream(fichero));
+		while(entrada.hasNextLine()){
+			i++;
+			String[] auxiliar = entrada.nextLine().trim().split("\\s+");
+			if(mapaAlumnos.get(auxiliar[0])==null){
+				Gestion.editarArchivoAvisos("Error en línea <"+i+">: Alumno inexistente: <"+auxiliar[0]+">");
+				retorno = false;
+				continue;
+			}
+			if(!mapaAlumnos.get(auxiliar[0]).comprobarMatricula(idAsignatura)){
+				Gestion.editarArchivoAvisos("Error en línea <"+i+">: Alumno no matriculado: <"+auxiliar[0]+">");
+				retorno = false;
+				continue;
+			}
+			try{
+				if(Float.parseFloat(auxiliar[1])<0||Float.parseFloat(auxiliar[1])>5){
+					Gestion.editarArchivoAvisos("Error en línea <"+i+">: Nota grupo A/B incorrecta");
+					continue;
+				}
+				if(Float.parseFloat(auxiliar[2])<0||Float.parseFloat(auxiliar[2])>5){
+					Gestion.editarArchivoAvisos("Error en línea <"+i+">: Nota grupo A/B incorrecta");
+					continue;
+				}
+			} catch(Exception notas){
+				Gestion.editarArchivoAvisos("Error en línea <"+i+">: Nota grupo A/B incorrecta");
+				continue;
+			}
+			Gestion.editarArchivoAvisos("Linea <"+i+">: OK");
+			mapaAlumnos.get(auxiliar[0]).evaluarAsignatura(idAsignatura, new Nota(Float.parseFloat(auxiliar[1]), 
+					Float.parseFloat(auxiliar[2]), anoAcademico));
+		}
+		entrada.close();
+		return retorno;
 	}
 }

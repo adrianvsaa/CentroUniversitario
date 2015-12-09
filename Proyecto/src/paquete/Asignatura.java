@@ -1,6 +1,8 @@
 package paquete;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Set;
 public class Asignatura {
 	private int identificador;
 	private String nombre;
@@ -117,4 +119,66 @@ public class Asignatura {
 	public int getIdentificador(){
 		return identificador;
 	}
+	
+	public void setCoordinador(String coordinador){
+		this.coordinador = coordinador;
+	}
+	
+	public String getSiglas(){
+		return siglas;
+	}
+	
+	public String getCoordinador(){
+		return coordinador;
+	}
+	
+	public static int siglasToIdentificador(LinkedHashMap<Integer, Asignatura> mapaAsignaturas, String siglas){
+		Set<Integer> keys = mapaAsignaturas.keySet();
+		Asignatura a=null;
+		for(int key:keys){
+			if(mapaAsignaturas.get(key).getSiglas().equals(siglas)){
+				a = mapaAsignaturas.get(key);
+				break;
+			}
+		}
+		if(a==null)
+			return 0;
+		return a.getIdentificador();
+	}
+	
+	public boolean comprobarGrupo(int idGrupo, char tipoGrupo){
+		boolean comprobar= false;
+		for(int i=0; i<grupos.size(); i++){
+			if(grupos.get(i).getIdentificador()==idGrupo&&grupos.get(i).getTipo()==tipoGrupo){
+				comprobar = true;
+				break;
+			}
+		}
+		return comprobar;
+	}
+	
+	public Grupo getGrupo(int idGrupo, char tipoGrupo){
+		int i;
+		for(i=0; i<grupos.size(); i++){
+			if(idGrupo==grupos.get(i).getIdentificador()&&tipoGrupo==grupos.get(i).getTipo())
+				break;
+		}
+		if(idGrupo==grupos.get(i).getIdentificador()&&tipoGrupo==grupos.get(i).getTipo())
+			return grupos.get(i);
+		else 
+			return null;
+	}
+	
+	public ArrayList<Grupo> getGrupos(){
+		return grupos;
+	}
+	
+	public String getNombre(){
+		return this.nombre;
+	}
+	
+	public int getCurso(){
+		return this.curso;
+	}
+	
 }

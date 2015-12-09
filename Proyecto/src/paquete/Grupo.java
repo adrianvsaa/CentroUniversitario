@@ -43,8 +43,27 @@ public class Grupo {
 			return "";
 	}
 	
+	public int getHoraSalida(){
+		SimpleDateFormat aux = new SimpleDateFormat("HH");
+		return Integer.parseInt(aux.format(horaSalida.getTime()));
+	}
+	
+	public int getHoraEntrada(){
+		SimpleDateFormat aux = new SimpleDateFormat("HH");
+		return Integer.parseInt(aux.format(horaEntrada.getTime()));
+	}
+	
+	public char getDia(){
+		return dia;
+	}
+	
+	public int getDuracion(){
+		SimpleDateFormat aux = new SimpleDateFormat("HH");
+		return Integer.parseInt(aux.format(horaSalida.getTime()))-Integer.parseInt(aux.format(horaEntrada.getTime()));
+	}
+	
 	public String toString(){
-		SimpleDateFormat aux = new SimpleDateFormat("HH:mm");
 		return Integer.toString(identificador)+" "+tipo;
 	}
+
 }
