@@ -1,6 +1,7 @@
 package paquete;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -160,5 +161,40 @@ public class Alumno extends Persona{
 			return true;
 		return false;
 			
+	}
+	
+	public boolean comprobarHorario(int horaEntrada, int horaSalida, char dia, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
+		boolean opcion = true;
+		Set<Integer> keys = docenciaRecibida.keySet();
+		for(int key:keys){
+			ArrayList<Grupo> grupos = mapaAsignaturas.get(key).getGrupos();
+			ArrayList<Grupo> gruposAlumno = docenciaRecibida.get(key).getGrupos();
+			for(int i=0; i<gruposAlumno.size(); i++){
+				for(int j=0; j<grupos.size(); j++){
+					if(gruposAlumno.get(i).getIdentificador()==grupos.get(j).getIdentificador()&&gruposAlumno.get(i).getTipo()==
+							grupos.get(j).getTipo()){
+						if(grupos.get(j).getDia()!=dia)
+							continue;
+						else{
+							if(grupos.get(j).getHoraEntrada()==horaEntrada||horaEntrada-grupos.get(j).getHoraSalida()<0){
+								opcion = false;
+								break;
+							}
+						}
+					}
+				}
+			}
+			if(!opcion)
+				break;		
+		}
+		return opcion;
+	}
+	
+	public boolean comprobarGrupo(int idAsignatura, char tipoGrupo){
+		if(docenciaRecibida.get(idAsignatura)==null)
+			return false;
+		if(docenciaRecibida.get(idAsignatura).comprobarGrupoTipo(tipoGrupo))
+			return true;
+		return false;
 	}
 }

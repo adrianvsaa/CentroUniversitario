@@ -44,6 +44,7 @@ public class Gestion{
 						matricularAlumno(instruccion.trim().split("\\s+"));
 						break;
 					case "AsignaGrupo":
+						asignarGrupoAlumno(instruccion.trim().split("\\s+"));
 						break;
 					case "Evalua":
 						evaluarAsignatura(instruccion.trim().split("\\s+"));
@@ -326,6 +327,46 @@ public class Gestion{
 			return;
 		}
 		mapaAlumnos.get(comando[1]).matricula(new Asignatura(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2])));
+		editarArchivoAvisos("OK");
+	}
+	
+	public static void asignarGrupoAlumno(String[] comando)throws IOException{
+		if(comando.length!=5){
+			editarArchivoAvisos("Numero de comandos incorrecto");
+			return;
+		}
+		if(mapaAlumnos.get(comando[1].trim())==null){
+			editarArchivoAvisos("Alumno inexistente");
+			return;
+		}
+		if(mapaAsignaturas.get(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2]))==null){
+			editarArchivoAvisos("Asignatura inexistente");
+			return;
+		}
+		if(!mapaAlumnos.get(comando[1].trim()).comprobarMatricula(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2]))){
+			editarArchivoAvisos("Alumno no matriculado");
+			return;
+		}
+		if(!GestionErrores.comprobarTipoGrupo(comando[3].trim())){
+			editarArchivoAvisos("Tipo de grupo incorrecto");
+			return;
+		}
+		if(!mapaAsignaturas.get(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2])).comprobarGrupo(Integer.parseInt(comando[4].trim()),
+				comando[3].trim().toCharArray()[0])){
+			editarArchivoAvisos("Grupo Inexistente");
+			return;
+		}
+		if(!GestionErrores.comprobarSolapeAlumno(mapaAlumnos.get(comando[1].trim()), mapaAsignaturas.get(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2])),
+				mapaAsignaturas,comando[3].trim().toCharArray()[0], Integer.parseInt(comando[4].trim()))){
+			editarArchivoAvisos("Se genera solape");
+			return;
+		}
+		if(mapaAlumnos.get(comando[1].trim()).comprobarGrupo(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2]), 
+				comando[3].trim().toCharArray()[0])){
+			editarArchivoAvisos("El alumno ya esta matriculado en un grupo de tipo "+comando[3].trim().toCharArray()[0]+" de esta asignatura");
+		}
+		mapaAlumnos.get(comando[1].trim()).asignarGrupo(mapaAsignaturas.get(Asignatura.siglasToIdentificador(mapaAsignaturas, comando[2])),
+		comando[3].trim().toCharArray()[0], Integer.parseInt(comando[4].trim()));
 		editarArchivoAvisos("OK");
 	}
 	

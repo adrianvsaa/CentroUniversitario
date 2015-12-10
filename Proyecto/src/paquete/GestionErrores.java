@@ -226,4 +226,13 @@ public class GestionErrores {
 		}
 		return retorno;
 	}
+	
+	public static boolean comprobarSolapeAlumno(Alumno a, Asignatura asig, LinkedHashMap<Integer, Asignatura> mapaAsignaturas, char tipoGrupo, 
+			int idGrupo){
+		if(a.comprobarHorario(asig.getGrupo(idGrupo, tipoGrupo).getHoraEntrada(), asig.getGrupo(idGrupo, tipoGrupo).getHoraSalida(), 
+				asig.getGrupo(idGrupo, tipoGrupo).getDia(),	mapaAsignaturas))
+			return true;
+		else
+			return false;
+	}
 }

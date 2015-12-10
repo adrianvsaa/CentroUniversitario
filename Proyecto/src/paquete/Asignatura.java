@@ -185,4 +185,15 @@ public class Asignatura {
 		return requisitos;
 	}
 	
+	public boolean comprobarGrupoTipo(char tipoGrupo){
+		boolean retorno = false;
+		for(int j=0; j<grupos.size(); j++){
+			if(grupos.get(j).getTipo()==tipoGrupo){
+				retorno = true;
+				break;
+			}
+		}
+		return retorno;
+	}
+	
 }
