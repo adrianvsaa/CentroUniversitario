@@ -8,13 +8,14 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.List;
 import java.util.Collections;
+import java.util.Comparator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
-public class Alumno extends Persona{
+public class Alumno extends Persona implements Comparable<Alumno>{
 	private Calendar fechaIngreso = Calendar.getInstance();
 	private LinkedHashMap<Integer, Asignatura> docenciaRecibida = new LinkedHashMap<Integer, Asignatura>();
 	private LinkedHashMap<Integer, Nota> asignaturasSuperadas = new LinkedHashMap<Integer, Nota>();
@@ -59,7 +60,7 @@ public class Alumno extends Persona{
 	
 	public float calcularNotaExpediente() throws IOException{
 		if(!GestionErrores.comprobarExpediente(asignaturasSuperadas)){
-			Gestion.editarArchivoAvisos(("El alumno"+super.getApellidos()+", "+super.getNombre()+" no tiene notas"));
+			return -1;
 		}
 		Set<Integer> keys = asignaturasSuperadas.keySet();
 		int i=0;
@@ -114,6 +115,11 @@ public class Alumno extends Persona{
 		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+auxiliarSuperadas+"\n"+auxiliarDocencia;
 	}
 	
+	public String getFechaIngreso(){
+		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
+		return aux.format(fechaIngreso.getTime());
+	}
+	
 	public String toString(){
 		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
 		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+docenciaRecibida.values()+"\n"+asignaturasSuperadas+"\n";
@@ -163,6 +169,14 @@ public class Alumno extends Persona{
 			
 	}
 	
+	public String salidaExpediente() throws IOException{
+		if(calcularNotaExpediente()>=0)
+			return getApellidos().trim()+",\t"+ getNombre()+"\t"+getDNI()+"\t"+calcularNotaExpediente(); 
+		else
+			return getApellidos().trim()+",\t"+ getNombre()+"\t"+getDNI()+"\tExpediente Vacio";
+		}
+
+	
 	public boolean comprobarHorario(int horaEntrada, int horaSalida, char dia, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
 		boolean opcion = true;
 		Set<Integer> keys = docenciaRecibida.keySet();
@@ -190,11 +204,25 @@ public class Alumno extends Persona{
 		return opcion;
 	}
 	
-	public boolean comprobarGrupo(int idAsignatura, char tipoGrupo){
-		if(docenciaRecibida.get(idAsignatura)==null)
-			return false;
-		if(docenciaRecibida.get(idAsignatura).comprobarGrupoTipo(tipoGrupo))
-			return true;
-		return false;
+	public LinkedHashMap<Integer, Asignatura> getDocenciaRecibida(){
+		return this.docenciaRecibida;
+	}
+
+	public int compareTo(Alumno o) {
+		return getApellidos().compareTo(o.getApellidos());
+	}
+	
+}
+
+class ComparadorNota implements Comparator<Alumno>{
+	public int compare(Alumno a1, Alumno a2){
+		try{
+		if(a1.calcularNotaExpediente()<a2.calcularNotaExpediente())
+			return 1;
+		else 
+			return -1;
+		} catch(Exception e){
+			return 1;
+		}
 	}
 }

@@ -1,8 +1,7 @@
 package paquete;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Set;
+
 public class Asignatura {
 	private int identificador;
 	private String nombre;
@@ -130,20 +129,6 @@ public class Asignatura {
 	
 	public String getCoordinador(){
 		return coordinador;
-	}
-	
-	public static int siglasToIdentificador(LinkedHashMap<Integer, Asignatura> mapaAsignaturas, String siglas){
-		Set<Integer> keys = mapaAsignaturas.keySet();
-		Asignatura a=null;
-		for(int key:keys){
-			if(mapaAsignaturas.get(key).getSiglas().equals(siglas)){
-				a = mapaAsignaturas.get(key);
-				break;
-			}
-		}
-		if(a==null)
-			return 0;
-		return a.getIdentificador();
 	}
 	
 	public boolean comprobarGrupo(int idGrupo, char tipoGrupo){

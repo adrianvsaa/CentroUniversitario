@@ -1,5 +1,5 @@
 8  
-Cálculo II  
+CÃ¡lculo II  
 CAL-II  
 1  
   
@@ -17,7 +17,7 @@ PE
 1 L 12 14; 2 L 15 17; 3 M 11 13; 4 M 15 17; 5 X 9 11; 6 X 11 13
 *
 12
-Programación II
+ProgramaciÃ³n II
 P-II
 2
 33218765X 
@@ -26,7 +26,7 @@ P-II
 1 L 12 14; 2 M 9 11; 3 M 16 18; 4 J 11 13
 *
 10
-Programación I
+ProgramaciÃ³n I
 P-I
 1
 
@@ -35,7 +35,7 @@ P-I
 1 L 12 14; 2 L 16 18; 3 X 9 11; 4 X 11 13; 5 J 12 14; 6 J 16 18 
 *
 11
-Comunicación de Datos
+ComunicaciÃ³n de Datos
 CD
 2
 
