@@ -52,6 +52,51 @@ public class Asignatura {
 			}
 		}
 	}
+	
+	public int getIdentificador(){
+		return identificador;
+	}
+	
+	public String getSiglas(){
+		return siglas;
+	}
+	
+	public String getCoordinador(){
+		return coordinador;
+	}
+	
+	public Grupo getGrupo(int idGrupo, char tipoGrupo){
+		int i;
+		for(i=0; i<grupos.size(); i++){
+			if(idGrupo==grupos.get(i).getIdentificador()&&tipoGrupo==grupos.get(i).getTipo())
+				break;
+		}
+		if(idGrupo==grupos.get(i).getIdentificador()&&tipoGrupo==grupos.get(i).getTipo())
+			return grupos.get(i);
+		else 
+			return null;
+	}
+	
+	public ArrayList<Grupo> getGrupos(){
+		return grupos;
+	}
+	
+	public String getNombre(){
+		return this.nombre;
+	}
+	
+	public int getCurso(){
+		return this.curso;
+	}
+	
+	public ArrayList<Integer> getRequisitos(){
+		return requisitos;
+	}
+	
+	public void setCoordinador(String coordinador){
+		this.coordinador = coordinador;
+	}
+	
 	public void addGrupo(int idGrupo, char tipoGrupo){
 		if(tipoGrupo=='A')
 			grupos.add(new Grupo(idGrupo, tipoGrupo));
@@ -59,7 +104,27 @@ public class Asignatura {
 			grupos.add(new Grupo(idGrupo, tipoGrupo));
 	}
 	
-	public String salidaFichero(){
+	public String toString(){
+		return grupos.toString();
+	}
+	
+	public String stringPersona(){
+		if(grupos.size()>0){
+			String auxiliar = "";
+			boolean ponercoma = false;
+			for (int i=0; i<grupos.size(); i++){
+				if(ponercoma)
+					auxiliar+= "; ";
+				auxiliar += Integer.toString(identificador)+" "+grupos.get(i).salidaPersona();
+				ponercoma = true;
+			}
+			return auxiliar;
+		}
+		else 
+			return Integer.toString(identificador);
+	}
+	
+	public String stringFichero(){
 		String auxRequisitos = "";
 		for(int i=0; i<requisitos.size(); i++){
 			if(i>0)
@@ -95,42 +160,6 @@ public class Asignatura {
 		+auxGruposA+"\n"+auxGruposB;
 	}
 	
-	public String salidaPersona(){
-		if(grupos.size()>0){
-			String auxiliar = "";
-			boolean ponercoma = false;
-			for (int i=0; i<grupos.size(); i++){
-				if(ponercoma)
-					auxiliar+= "; ";
-				auxiliar += Integer.toString(identificador)+" "+grupos.get(i).salidaPersona();
-				ponercoma = true;
-			}
-			return auxiliar;
-		}
-		else 
-			return Integer.toString(identificador);
-	}
-	
-	public String toString(){
-		return grupos.toString();
-	}
-	
-	public int getIdentificador(){
-		return identificador;
-	}
-	
-	public void setCoordinador(String coordinador){
-		this.coordinador = coordinador;
-	}
-	
-	public String getSiglas(){
-		return siglas;
-	}
-	
-	public String getCoordinador(){
-		return coordinador;
-	}
-	
 	public boolean comprobarGrupo(int idGrupo, char tipoGrupo){
 		boolean comprobar= false;
 		for(int i=0; i<grupos.size(); i++){
@@ -140,34 +169,6 @@ public class Asignatura {
 			}
 		}
 		return comprobar;
-	}
-	
-	public Grupo getGrupo(int idGrupo, char tipoGrupo){
-		int i;
-		for(i=0; i<grupos.size(); i++){
-			if(idGrupo==grupos.get(i).getIdentificador()&&tipoGrupo==grupos.get(i).getTipo())
-				break;
-		}
-		if(idGrupo==grupos.get(i).getIdentificador()&&tipoGrupo==grupos.get(i).getTipo())
-			return grupos.get(i);
-		else 
-			return null;
-	}
-	
-	public ArrayList<Grupo> getGrupos(){
-		return grupos;
-	}
-	
-	public String getNombre(){
-		return this.nombre;
-	}
-	
-	public int getCurso(){
-		return this.curso;
-	}
-	
-	public ArrayList<Integer> getRequisitos(){
-		return requisitos;
 	}
 	
 	public boolean comprobarGrupoTipo(char tipoGrupo){

@@ -1,5 +1,6 @@
 package paquete;
 
+import java.awt.GridLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,8 +11,10 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.Set;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
-public abstract class Personas {
+public abstract class Personas implements Constantes{
 	private static File fichero = new File("personas.txt");
 	public static void poblar() throws FileNotFoundException{
 		if(!fichero.exists()){
@@ -54,7 +57,7 @@ public abstract class Personas {
 		String[] comando1 = token[0].trim().split("\\s+");
 		Persona p;
 		if(token.length!=7&&token.length!=5){
-			Gestion.aviso("Numero de comandos incorrecto");
+			Gestion.aviso(nComandos);
 			return;
 		}
 		if(!GestionErrores.comprobarDNI(comando1[2])){
@@ -65,20 +68,20 @@ public abstract class Personas {
 				String[] comando2 = token[4].trim().split("\\s+");
 				Calendar fecha = Gestion.stringToCalendar(comando2[0]);
 				if(comando1.length!=3||comando2.length!=2||token.length!=5){
-					Gestion.aviso("Numero de comandos incorrecto");
+					Gestion.aviso(nComandos);
 					return;
 				}
 				if(!GestionErrores.comprobarFecha(fecha)){
-					Gestion.aviso("Fecha Incorrecta");
+					Gestion.aviso(fechaIncorrecta);
 					return;
 				}
 				Calendar fechaIngreso = Gestion.stringToCalendar(comando2[1]);
 				if(!GestionErrores.comprobarFechaIngreso(fechaIngreso, fecha)){
-					Gestion.aviso("Fecha Incorrecta");
+					Gestion.aviso(fechaIncorrecta);
 					return;
 				}
 				if(mapa.get(comando1[2])!=null){
-					Gestion.aviso("Alumno ya existente");
+					Gestion.aviso(alExi);
 					return;
 				}
 				p = new Alumno(comando1[2], token[1], token[3], fecha, fechaIngreso);
@@ -86,20 +89,20 @@ public abstract class Personas {
 			}
 			else{
 				if(token.length!=7||token[4].trim().split("\\s+").length!=2||token[6].trim().split("\\s+").length!=1){
-					Gestion.aviso("Numero de comandos incorrecto");
+					Gestion.aviso(nComandos);
 					return;
 				}
 				Calendar fecha = Gestion.stringToCalendar(token[4].trim().split(" ")[1]);
 				if(!GestionErrores.comprobarFecha(fecha)){
-					Gestion.aviso("Fecha Incorrecta");
+					Gestion.aviso(fechaIncorrecta);
 					return;
 				}
 				if(!GestionErrores.comprobarHorasAsignables(Integer.parseInt(token[6].trim()), token[4].trim().trim().split("\\s+")[0])){
-					Gestion.aviso("Número de horas incorrecto");
+					Gestion.aviso(hoInc);
 					return;
 				}
 				if(mapa.get(comando1[2])!=null){
-					Gestion.aviso("Profesor ya existente");
+					Gestion.aviso(prExi);
 					return;
 				}
 				p =  new Profesor(comando1[2], token[1].trim(), token[3].trim(), fecha, token[4].trim().split("\\s+")[0], 
@@ -115,9 +118,9 @@ public abstract class Personas {
 		boolean ponerAsterisco = false;
 		for(String key:keys){
 			if(ponerAsterisco)
-				salida.write("\n*\n"+"alumno\n"+((Alumno)Gestion.mapaAlumnos.get(key)).salidaFichero());
+				salida.write("\n*\n"+"alumno\n"+((Alumno)Gestion.mapaAlumnos.get(key)).stringFichero());
 			else
-				salida.write("alumno\n"+((Alumno)Gestion.mapaAlumnos.get(key)).salidaFichero());
+				salida.write("alumno\n"+((Alumno)Gestion.mapaAlumnos.get(key)).stringFichero());
 			ponerAsterisco = true;
 		}
 		keys = Gestion.mapaProfesores.keySet();
@@ -131,31 +134,39 @@ public abstract class Personas {
 		salida.close();
 	}
 	
-	/*
+	
 	public static void mostrarPantalla(){
 		DefaultListModel modelo = new DefaultListModel();
-		Set<String> keys = mapaAlumnos.keySet();
+		Set<String> keys = Gestion.mapaAlumnos.keySet();
+		JPanel panel;
+		JFrame ventana =  new JFrame();
 		for(String key:keys){
 			modelo.addElement(key);
-			modelo.addElement(mapaAlumnos.get(key).getApellidos()+", "+mapaAlumnos.get(key).getNombre());
-			modelo.addElement("Fecha de nacimiento: "+mapaAlumnos.get(key).getFechaNacimiento());
-			modelo.addElement("Fecha de ingreso: "+mapaAlumnos.get(key).getFechaIngreso());
-			modelo.addElement("Asignaturas aprobadas: "+mapaAlumnos.get(key).getAsignaturasSuperadas());	
-			DefaultTableModel modelo2 = new DefaultTableModel();
-			mapaAlumnos.get(key).hacerTablaSwing(modelo2);
-			JTable tabla = new JTable(modelo2);
-			modelo.addElement(tabla);
-			JFrame ventana2 = new JFrame();
-			ventana2.add(tabla);
-			ventana2.setVisible(true);
+			modelo.addElement(Gestion.mapaAlumnos.get(key).getApellidos()+", "+Gestion.mapaAlumnos.get(key).getNombre());
+			modelo.addElement("Fecha de nacimiento: "+Gestion.mapaAlumnos.get(key).getFechaNacimiento());
+			modelo.addElement("Fecha de ingreso: "+((Alumno)Gestion.mapaAlumnos.get(key)).getFechaIngreso());
+			modelo.addElement("Asignaturas superadas:");
+			((Alumno)Gestion.mapaAlumnos.get(key)).stringGrafico(modelo);
+			modelo.addElement(" ");
+		}
+		keys  = Gestion.mapaProfesores.keySet();
+		for(String key:keys){
+			modelo.addElement(key);
+			modelo.addElement(Gestion.mapaProfesores.get(key).getApellidos()+", "+Gestion.mapaProfesores.get(key).getNombre());
+			modelo.addElement("Fecha de nacimiento: "+Gestion.mapaProfesores.get(key).getFechaNacimiento());
+			modelo.addElement("Departamento: "+((Profesor)Gestion.mapaProfesores.get(key)).getDepartamento());
+			modelo.addElement("Categoria: "+((Profesor)Gestion.mapaProfesores.get(key)).getCategoria());
+			modelo.addElement("Horas asignables: "+((Profesor)Gestion.mapaProfesores.get(key)).getHorasAsignables());
+			((Profesor)Gestion.mapaProfesores.get(key)).stringGrafico(modelo);
+			modelo.addElement(" ");
 		}
 		JList listaAlumnos = new JList(modelo);
 		listaAlumnos.setLayout(new BoxLayout(listaAlumnos, BoxLayout.Y_AXIS));
 		JScrollPane impresion = new JScrollPane(listaAlumnos, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		JFrame ventana =  new JFrame("Personas");
+		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ventana.setBounds(300, 200, 1080, 720);
 		ventana.add(impresion);
 		ventana.setResizable(false);
 		ventana.setVisible(true);
-	}*/
+	}
 }

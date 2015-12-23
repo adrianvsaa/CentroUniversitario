@@ -7,7 +7,7 @@ import java.util.Set;
 import java.io.IOException;
 import java.io.FileInputStream;
 
-public class GestionErrores {
+public class GestionErrores implements Constantes{
 	
 	public static boolean comprobarExpediente(LinkedHashMap<Integer, Nota> asignaturasSuperadas){
 		if(asignaturasSuperadas.size()==0)
@@ -133,7 +133,7 @@ public class GestionErrores {
 	
 	public static boolean comprobarSolapeProfesor(Asignatura a, Profesor p, int idGrupo, char tipoGrupo, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
 		if(p.comprobarHorario(a.getGrupo(idGrupo, tipoGrupo).getHoraEntrada(), a.getGrupo(idGrupo, tipoGrupo).getHoraSalida(),
-				a.getGrupo(idGrupo, tipoGrupo).getDia(), mapaAsignaturas))
+				a.getGrupo(idGrupo, tipoGrupo).getDia(), mapaAsignaturas, p))
 			return true;
 		else
 			return false;
@@ -167,29 +167,29 @@ public class GestionErrores {
 			i++;
 			String[] auxiliar = entrada.nextLine().trim().split("\\s+");
 			if(mapaAlumnos.get(auxiliar[0])==null){
-				Gestion.aviso("Error en línea <"+i+">: Alumno inexistente: <"+auxiliar[0]+">");
+				Gestion.aviso(fNotasLineas+i+">: Alumno inexistente: <"+auxiliar[0]+">");
 				retorno = false;
 				continue;
 			}
 			if(!((Alumno)mapaAlumnos.get(auxiliar[0])).comprobarMatricula(idAsignatura)){
-				Gestion.aviso("Error en línea <"+i+">: Alumno no matriculado: <"+auxiliar[0]+">");
+				Gestion.aviso(fNotasLineas+i+">: Alumno no matriculado: <"+auxiliar[0]+">");
 				retorno = false;
 				continue;
 			}
 			try{
 				if(Float.parseFloat(auxiliar[1])<0||Float.parseFloat(auxiliar[1])>5){
-					Gestion.aviso("Error en línea <"+i+">: Nota grupo A/B incorrecta");
+					Gestion.aviso(fNotasLineas+i+">: Nota grupo A/B incorrecta");
 					continue;
 				}
 				if(Float.parseFloat(auxiliar[2])<0||Float.parseFloat(auxiliar[2])>5){
-					Gestion.aviso("Error en línea <"+i+">: Nota grupo A/B incorrecta");
+					Gestion.aviso(fNotasLineas+i+">: Nota grupo A/B incorrecta");
 					continue;
 				}
 			} catch(Exception notas){
-				Gestion.aviso("Error en línea <"+i+">: Nota grupo A/B incorrecta");
+				Gestion.aviso(fNotasLineas+i+">: Nota grupo A/B incorrecta");
 				continue;
 			}
-			Gestion.aviso("Linea <"+i+">: OK");
+			Gestion.aviso(fNotasLineas+i+">: OK");
 			((Alumno)mapaAlumnos.get(auxiliar[0])).evaluarAsignatura(idAsignatura, new Nota(Float.parseFloat(auxiliar[1]), 
 					Float.parseFloat(auxiliar[2]), anoAcademico));
 		}
@@ -211,7 +211,7 @@ public class GestionErrores {
 	public static boolean comprobarSolapeAlumno(Alumno a, Asignatura asig, LinkedHashMap<Integer, Asignatura> mapaAsignaturas, char tipoGrupo, 
 			int idGrupo){
 		if(a.comprobarHorario(asig.getGrupo(idGrupo, tipoGrupo).getHoraEntrada(), asig.getGrupo(idGrupo, tipoGrupo).getHoraSalida(), 
-				asig.getGrupo(idGrupo, tipoGrupo).getDia(),	mapaAsignaturas))
+				asig.getGrupo(idGrupo, tipoGrupo).getDia(),	mapaAsignaturas, a))
 			return true;
 		else
 			return false;

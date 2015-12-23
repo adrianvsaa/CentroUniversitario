@@ -1,14 +1,19 @@
 package paquete;
 
-
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
+import java.awt.GridLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -24,7 +29,6 @@ public class Alumno extends Persona implements Comparable<Alumno>{
 		super(dni, nombre, apellidos, fechaNacimiento);
 		this.fechaIngreso = fechaIngreso;
 	}
-	
 	
 	public Alumno(String dni, String nombre, String apellidos, Calendar fechaNacimiento, Calendar fechaIngreso, String docenciaRecibida,
 			String asignaturasSuperadas) {
@@ -58,18 +62,17 @@ public class Alumno extends Persona implements Comparable<Alumno>{
 		}
 	}
 	
-	public float calcularNotaExpediente() throws IOException{
-		if(!GestionErrores.comprobarExpediente(asignaturasSuperadas)){
-			return -1;
-		}
-		Set<Integer> keys = asignaturasSuperadas.keySet();
-		int i=0;
-		float aux = 0;
-		for(Integer key:keys){
-			aux += asignaturasSuperadas.get(key).getNota();
-			i++;
-		}
-		return aux/i;
+	public String getFechaIngreso(){
+		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
+		return aux.format(fechaIngreso.getTime());
+	}
+	
+	public LinkedHashMap<Integer, Nota> getAsignaturasSuperadas(){
+		return asignaturasSuperadas;
+	}
+	
+	public LinkedHashMap<Integer, Asignatura> getDocenciaRecibida(){
+		return this.docenciaRecibida;
 	}
 	
 	public void matricula(Asignatura asignatura){
@@ -92,41 +95,18 @@ public class Alumno extends Persona implements Comparable<Alumno>{
 		return;
 	}
 	
-	public String salidaFichero(){
-		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
-		String auxiliarSuperadas = "";
+	public float calcularNotaExpediente() throws IOException{
+		if(!GestionErrores.comprobarExpediente(asignaturasSuperadas)){
+			return -1;
+		}
 		Set<Integer> keys = asignaturasSuperadas.keySet();
-		boolean ponercoma = false;
-		for(int key:keys){
-			if(ponercoma)
-				auxiliarSuperadas += "; ";
-			auxiliarSuperadas += key+" "+asignaturasSuperadas.get(key).toString();
-			ponercoma =true;
+		int i=0;
+		float aux = 0;
+		for(Integer key:keys){
+			aux += asignaturasSuperadas.get(key).getNota();
+			i++;
 		}
-		ponercoma = false;
-		String auxiliarDocencia = "";
-		keys = docenciaRecibida.keySet();
-		for(int key:keys){
-			if(ponercoma)
-				auxiliarDocencia += "; ";
-			auxiliarDocencia += docenciaRecibida.get(key).salidaPersona();
-			ponercoma = true;
-		}
-		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+auxiliarSuperadas+"\n"+auxiliarDocencia;
-	}
-	
-	public String getFechaIngreso(){
-		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
-		return aux.format(fechaIngreso.getTime());
-	}
-	
-	public String toString(){
-		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
-		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+docenciaRecibida.values()+"\n"+asignaturasSuperadas+"\n";
-	}
-	
-	public LinkedHashMap<Integer, Nota> getAsignaturasSuperadas(){
-		return asignaturasSuperadas;
+		return aux/i;
 	}
 	
 	public void expediente(String fichero, LinkedHashMap<Integer, Asignatura> mapaAsignaturas)throws IOException{
@@ -145,6 +125,55 @@ public class Alumno extends Persona implements Comparable<Alumno>{
 					+lista.get(i).getAnoAcademico()+"\n");
 		}
 		salida.close();
+	}
+	
+	public String toString(){
+		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
+		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+docenciaRecibida.values()+"\n"+asignaturasSuperadas+"\n";
+	}
+	
+	public String stringExpediente() throws IOException{
+		if(calcularNotaExpediente()>=0)
+			return getApellidos().trim()+",\t"+ getNombre()+"\t"+getDNI()+"\t"+calcularNotaExpediente(); 
+		else
+			return getApellidos().trim()+",\t"+ getNombre()+"\t"+getDNI()+"\tExpediente Vacio";
+		}
+	
+	public String stringFichero(){
+		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
+		String auxiliarSuperadas = "";
+		Set<Integer> keys = asignaturasSuperadas.keySet();
+		boolean ponercoma = false;
+		for(int key:keys){
+			if(ponercoma)
+				auxiliarSuperadas += "; ";
+			auxiliarSuperadas += key+" "+asignaturasSuperadas.get(key).toString();
+			ponercoma =true;
+		}
+		ponercoma = false;
+		String auxiliarDocencia = "";
+		keys = docenciaRecibida.keySet();
+		for(int key:keys){
+			if(ponercoma)
+				auxiliarDocencia += "; ";
+			auxiliarDocencia += docenciaRecibida.get(key).stringPersona();
+			ponercoma = true;
+		}
+		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+auxiliarSuperadas+"\n"+auxiliarDocencia;
+	}
+	
+	public void stringGrafico(DefaultListModel modelo){
+		Set<Integer> keys = asignaturasSuperadas.keySet();
+		for(int key : keys){
+			modelo.addElement(Gestion.mapaAsignaturas.get(key).getNombre()+":"+Float.toString(asignaturasSuperadas.get(key).getNota())+
+					"--"+asignaturasSuperadas.get(key).getAnoAcademico());
+		}
+		modelo.addElement("Asignaturas Cursadas:");
+		keys = docenciaRecibida.keySet();
+		for(int key : keys){
+			modelo.addElement(Gestion.mapaAsignaturas.get(key).getNombre());
+		}
+		return;
 	}
 	
 	public boolean comprobarEvaluacion(String anoAcademico, int idAsignatura){
@@ -169,45 +198,11 @@ public class Alumno extends Persona implements Comparable<Alumno>{
 			
 	}
 	
-	public String salidaExpediente() throws IOException{
-		if(calcularNotaExpediente()>=0)
-			return getApellidos().trim()+",\t"+ getNombre()+"\t"+getDNI()+"\t"+calcularNotaExpediente(); 
-		else
-			return getApellidos().trim()+",\t"+ getNombre()+"\t"+getDNI()+"\tExpediente Vacio";
-		}
-
-	
-	public boolean comprobarHorario(int horaEntrada, int horaSalida, char dia, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
-		boolean opcion = true;
+	public boolean comprobarHorario(int horaEntrada, int horaSalida, char dia, LinkedHashMap<Integer, Asignatura> mapaAsignaturas, Alumno a){
 		Set<Integer> keys = docenciaRecibida.keySet();
-		for(int key:keys){
-			ArrayList<Grupo> grupos = mapaAsignaturas.get(key).getGrupos();
-			ArrayList<Grupo> gruposAlumno = docenciaRecibida.get(key).getGrupos();
-			for(int i=0; i<gruposAlumno.size(); i++){
-				for(int j=0; j<grupos.size(); j++){
-					if(gruposAlumno.get(i).getIdentificador()==grupos.get(j).getIdentificador()&&gruposAlumno.get(i).getTipo()==
-							grupos.get(j).getTipo()){
-						if(grupos.get(j).getDia()!=dia)
-							continue;
-						else{
-							if(grupos.get(j).getHoraEntrada()==horaEntrada||horaEntrada-grupos.get(j).getHoraSalida()<0){
-								opcion = false;
-								break;
-							}
-						}
-					}
-				}
-			}
-			if(!opcion)
-				break;		
-		}
-		return opcion;
+		return Asignaturas.comprobarHorario(keys, horaEntrada, horaSalida, dia, a);
 	}
 	
-	public LinkedHashMap<Integer, Asignatura> getDocenciaRecibida(){
-		return this.docenciaRecibida;
-	}
-
 	public int compareTo(Alumno o) {
 		return getApellidos().compareTo(o.getApellidos());
 	}

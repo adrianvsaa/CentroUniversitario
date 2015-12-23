@@ -1,6 +1,7 @@
 package paquete;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
@@ -9,7 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 
-public class Gestion{
+public class Gestion implements Constantes{
 
 	static LinkedHashMap<String, Persona> mapaAlumnos = new LinkedHashMap<String, Persona>();
 	static LinkedHashMap<String, Persona> mapaProfesores = new LinkedHashMap<String, Persona>();
@@ -18,55 +19,67 @@ public class Gestion{
 	public static void main(String[] args) throws IOException{
 		Personas.poblar();
 		Asignaturas.poblar();
-		//Peronas.mostrarPantalla();
+		Personas.mostrarPantalla();
 		File ejecucion = new File("ejecucion.txt");
 		if(!ejecucion.exists()){
-			System.out.println("La ejecucion termino");
+			
 		}
 		else{
+			Calendar fechaActual = Calendar.getInstance();
+			SimpleDateFormat formatoFecha = new SimpleDateFormat("HH:mm   dd/MM/YYYY");
+			aviso("\n\nNueva Ejecucion:\t"+formatoFecha.format(fechaActual.getTime())+"\n");
 			Scanner entradaInstrucciones = new Scanner(new FileInputStream("ejecucion.txt"));
 			while(entradaInstrucciones.hasNext()){
 				String instruccion = entradaInstrucciones.nextLine();
 				if(instruccion.charAt(0)=='*')
 					continue;
-				String[] auxiliar = instruccion.trim().split("\\s+");
-				aviso("Comando: "+instruccion);
-				switch(auxiliar[0]){
+				String[] token = instruccion.trim().split("\\s+");
+				switch(token[0]){
 					case "InsertaPersona":
-						if(auxiliar[1].trim().equals("alumno"))
+						aviso(insertaPersona);
+						if(token[1].trim().equals("alumno"))
 							Personas.añadir(instruccion, mapaAlumnos);
 						else
 							Personas.añadir(instruccion, mapaProfesores);
 						break;
 					case "AsignaCoordinador":
+						aviso(asignaCoordinador);
 						Asignaturas.asignarCoordinador(instruccion.trim().split("\\s+"));
 						break;
 					case "AsignaCargaDocente":
+						aviso(asignaCargaDocente);
 						Profesores.asignarCargaDocente(instruccion.trim().split("\\s+"));
 						break;
 					case "Matricula":
+						aviso(matricularAlumno);
 						Alumnos.matricular(instruccion.trim().split("\\s+"));
 						break;
 					case "AsignaGrupo":
+						aviso(asignaGrupo);
 						Alumnos.asignarGrupo(instruccion.trim().split("\\s+"));
 						break;
 					case "Evalua":
+						aviso(evaluarAsignatura);
 						Alumnos.evaluarAsignatura(instruccion.trim().split("\\s+"));
 						break;
 					case "Expediente":
+						aviso(expedienteAlumno);
 						Alumnos.obtenerExpediente(instruccion.trim().split("\\s+"));
 						break;
 					case "ObtenerCalendarioClases":
+						aviso(calendarioProfesor);
 						Profesores.obtenerCalendario(instruccion.trim().split("\\s+"));
 						break;
 					case "OrdenaAlumnosXNota":
+						aviso(ordenaAlumnosNota);
 						Alumnos.ordenarXNota(instruccion.trim().split("\\s+"));
 						break;
 					case "InsertaAsignatura":
+						aviso(insertaAsignatura);
 						Asignaturas.añadir(instruccion.trim().split("\\s+"));
 						break;
 					default:
-						aviso("Comando inexistente");
+						aviso(cIncorrecto);
 						break;
 				}
 				aviso("\n");
@@ -74,19 +87,20 @@ public class Gestion{
 			}
 			entradaInstrucciones.close();
 		}
-		//Personas.imprimir();
-		//Asignaturas.imprimir();
+		Personas.imprimir();
+		Asignaturas.imprimir();
 	}
 	
 	public static void aviso(String aviso)throws IOException{
 		File fichero =new File("avisos.txt");
+		BufferedWriter salida=null;
 		try{
-		   	BufferedWriter salida = new BufferedWriter(new FileWriter(fichero, true));
+		   	salida = new BufferedWriter(new FileWriter(fichero, true));
 		  	salida.write(aviso);
-		  	salida.write(System.getProperty("line.separator"));
-		    salida.close();
 		 }catch(IOException ax){
 		    ax.printStackTrace();
+		 } finally{
+			 salida.close();
 		 }
 		return;
 	}

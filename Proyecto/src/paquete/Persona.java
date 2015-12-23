@@ -15,6 +15,7 @@ public abstract class Persona {
 		this.apellidos = apellidos;
 		this.fechaNacimiento = fechaNacimiento;
 	}
+	
 	public String getNombre(){
 		return nombre;
 	}

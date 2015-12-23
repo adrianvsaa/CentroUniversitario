@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import javax.swing.DefaultListModel;
+
 public class Profesor extends Persona{
 	private String categoria;
 	private String departamento;
@@ -53,19 +55,6 @@ public class Profesor extends Persona{
 		return;
 	}
 	
-	public String salidaFichero(){
-		String auxiliarDocencia = "";
-		Set<Integer> keys = docenciaImpartida.keySet();
-		boolean ponercoma = false;
-		for(int key:keys){
-			if(ponercoma)
-				auxiliarDocencia += "; ";
-			auxiliarDocencia += docenciaImpartida.get(key).salidaPersona();
-			ponercoma = true;
-		}
-		return super.toString()+"\n"+categoria+"\n"+departamento+"\n"+horasAsignables+"\n"+auxiliarDocencia;
-	}
-	
 	public String getCategoria(){
 		return categoria;
 	}
@@ -74,44 +63,14 @@ public class Profesor extends Persona{
 		return horasAsignables;
 	}
 	
-	public boolean comprobarAsignacion(int identificador, int idGrupo, char tipoGrupo){
-		if(docenciaImpartida.get(identificador)==null)
-			return true;
-		if(docenciaImpartida.get(identificador).comprobarGrupo(idGrupo, tipoGrupo))
-			return false;
-		return true;
+	public String getDepartamento(){
+		return departamento;
 	}
 	
-	public String toString(){
-		return super.toString()+"\n"+categoria+"\n"+departamento+"\n"+Integer.toString(horasAsignables)+"\n"+docenciaImpartida+"\n";
+	public LinkedHashMap<Integer, Asignatura> getDocenciaImpartida(){
+		return docenciaImpartida;
 	}
 	
-	public boolean comprobarHorario(int horaEntrada, int horaSalida, char dia, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
-		boolean opcion = true;
-		Set<Integer> keys = docenciaImpartida.keySet();
-		for(int key:keys){
-				ArrayList<Grupo> grupos = mapaAsignaturas.get(key).getGrupos();
-				ArrayList<Grupo> gruposProfesor = docenciaImpartida.get(key).getGrupos();
-				for(int i=0; i<gruposProfesor.size(); i++){
-					for(int j=0; j<grupos.size(); j++){
-						if(gruposProfesor.get(i).getIdentificador()==grupos.get(j).getIdentificador()&&gruposProfesor.get(i).getTipo()==
-								grupos.get(j).getTipo()){
-							if(grupos.get(j).getDia()!=dia)
-								continue;
-							else{
-								if(grupos.get(j).getHoraEntrada()==horaEntrada||horaEntrada-grupos.get(j).getHoraSalida()<0){
-									opcion = false;
-									break;
-								}
-							}
-						}
-					}
-				}
-				if(!opcion)
-					break;		
-		}
-		return opcion;
-	}
 	public int getHorasImpartidas(LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
 		int retorno=0;
 		Set<Integer> keys = docenciaImpartida.keySet();
@@ -132,7 +91,7 @@ public class Profesor extends Persona{
 	public void obtenerCalendario(String fichero, LinkedHashMap<Integer, Asignatura> mapaAsignaturas) throws IOException{
 		File archivo = new File(fichero);
 		BufferedWriter salida = new BufferedWriter(new FileWriter(archivo));
-		salida.write("Dia; Hora; Asignatura; Tipo grupo; Id grupo\n");
+		salida.write("Dia\t Hora\t Asignatura\t Tipo grupo\t Id grupo\n");
 		Set<Integer> keys = docenciaImpartida.keySet();
 		for(int key:keys){
 			ArrayList<Grupo> gruposProfesor = docenciaImpartida.get(key).getGrupos();
@@ -147,6 +106,44 @@ public class Profesor extends Persona{
 			}
 		}
 		salida.close();
+	}
+	
+	public String toString(){
+		return super.toString()+"\n"+categoria+"\n"+departamento+"\n"+Integer.toString(horasAsignables)+"\n"+docenciaImpartida+"\n";
+	}
+	
+	public String salidaFichero(){
+		String auxiliarDocencia = "";
+		Set<Integer> keys = docenciaImpartida.keySet();
+		boolean ponercoma = false;
+		for(int key:keys){
+			if(ponercoma)
+				auxiliarDocencia += "; ";
+			auxiliarDocencia += docenciaImpartida.get(key).stringPersona();
+			ponercoma = true;
+		}
+		return super.toString()+"\n"+categoria+"\n"+departamento+"\n"+horasAsignables+"\n"+auxiliarDocencia;
+	}
+	
+	public void stringGrafico(DefaultListModel modelo){
+		Set<Integer> keys = docenciaImpartida.keySet();
+		modelo.addElement("Docencia Impartida");
+		for(int key: keys){
+			modelo.addElement(Gestion.mapaAsignaturas.get(key).getNombre());
+		}
+	}
+	
+	public boolean comprobarAsignacion(int identificador, int idGrupo, char tipoGrupo){
+		if(docenciaImpartida.get(identificador)==null)
+			return true;
+		if(docenciaImpartida.get(identificador).comprobarGrupo(idGrupo, tipoGrupo))
+			return false;
+		return true;
+	}
+	
+	public boolean comprobarHorario(int horaEntrada, int horaSalida, char dia, LinkedHashMap<Integer, Asignatura> mapaAsignaturas, Profesor p){
+		Set<Integer> keys = docenciaImpartida.keySet();
+		return Asignaturas.comprobarHorario(keys, horaEntrada, horaSalida, dia, p);
 	}
 	
 	public boolean comprobarDocenciaVacia(){

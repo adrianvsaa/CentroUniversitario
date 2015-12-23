@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.Set;
@@ -47,9 +48,9 @@ public class Asignaturas {
 		boolean ponerAsterisco = false;
 		for(int key:keys){
 			if(ponerAsterisco)
-				salida.write("\n*\n"+Gestion.mapaAsignaturas.get(key).salidaFichero());
+				salida.write("\n*\n"+Gestion.mapaAsignaturas.get(key).stringFichero());
 			else
-				salida.write(Gestion.mapaAsignaturas.get(key).salidaFichero());
+				salida.write(Gestion.mapaAsignaturas.get(key).stringFichero());
 			ponerAsterisco = true;
 		}
 		salida.close();
@@ -90,5 +91,36 @@ public class Asignaturas {
 		if(a==null)
 			return 0;
 		return a.getIdentificador();
+	}
+	
+	public static boolean comprobarHorario(Set<Integer> keys, int horaEntrada, int horaSalida, char dia, Persona p){
+		boolean opcion = true;
+		LinkedHashMap<Integer, Asignatura> mapa;
+		if(p instanceof Alumno)
+			mapa = ((Alumno)p).getDocenciaRecibida();
+		else
+			mapa = ((Profesor)p).getDocenciaImpartida();
+		for(int key:keys){
+			ArrayList<Grupo> grupos = Gestion.mapaAsignaturas.get(key).getGrupos();
+			ArrayList<Grupo> gruposPersona = mapa.get(key).getGrupos();
+			for(int i=0; i<gruposPersona.size(); i++){
+				for(int j=0; j<grupos.size(); j++){
+					if(gruposPersona.get(i).getIdentificador()==grupos.get(j).getIdentificador()&&gruposPersona.get(i).getTipo()==
+							grupos.get(j).getTipo()){
+						if(grupos.get(j).getDia()!=dia)
+							continue;
+						else{
+							if(grupos.get(j).getHoraEntrada()==horaEntrada||horaEntrada-grupos.get(j).getHoraSalida()<0){
+								opcion = false;
+								break;
+							}
+						}
+					}
+				}
+			}
+			if(!opcion)
+				break;		
+		}
+		return opcion;
 	}
 }
