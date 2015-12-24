@@ -12,7 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.Set;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 public abstract class Personas implements Constantes{
 	private static File fichero = new File("personas.txt");
@@ -136,33 +135,77 @@ public abstract class Personas implements Constantes{
 	
 	
 	public static void mostrarPantalla(){
-		DefaultListModel modelo = new DefaultListModel();
 		Set<String> keys = Gestion.mapaAlumnos.keySet();
-		JPanel panel;
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(13*(Gestion.mapaAlumnos.size()+Gestion.mapaProfesores.size()), 2,0,0 ));
 		JFrame ventana =  new JFrame();
+		ventana.setLayout(new GridLayout(1,1,0,0));
 		for(String key:keys){
-			modelo.addElement(key);
-			modelo.addElement(Gestion.mapaAlumnos.get(key).getApellidos()+", "+Gestion.mapaAlumnos.get(key).getNombre());
-			modelo.addElement("Fecha de nacimiento: "+Gestion.mapaAlumnos.get(key).getFechaNacimiento());
-			modelo.addElement("Fecha de ingreso: "+((Alumno)Gestion.mapaAlumnos.get(key)).getFechaIngreso());
-			modelo.addElement("Asignaturas superadas:");
-			((Alumno)Gestion.mapaAlumnos.get(key)).stringGrafico(modelo);
-			modelo.addElement(" ");
+			panel.add(new JLabel("DNI"));
+			panel.add(new JLabel(key));
+			panel.add(new JLabel("Nombre:"));
+			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getNombre()));
+			panel.add(new JLabel("Apellidos:"));
+			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getApellidos()));
+			panel.add(new JLabel("Perfil:"));
+			panel.add(new JLabel("Alumno"));
+			panel.add(new JLabel("Fecha de nacimiento:"));
+			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getFechaNacimiento()));
+			panel.add(new JLabel("Fecha de Ingreso:"));
+			panel.add(new JLabel(((Alumno)Gestion.mapaAlumnos.get(key)).getFechaIngreso()));
+			panel.add(new JLabel("Asignaturas matriculado:"));
+			panel.add(new JLabel(" "));
+			LinkedHashMap<Integer, Asignatura> mapa1 = ((Alumno)Gestion.mapaAlumnos.get(key)).getDocenciaRecibida();
+			Set<Integer> keys1 = mapa1.keySet();
+			for(int key1 : keys1){
+				panel.add(new JLabel(" "));
+				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
+			}
+			panel.add(new JLabel("Asignaturas superadas:"));
+			panel.add(new JLabel(" "));
+			LinkedHashMap<Integer, Nota> mapa2 = ((Alumno)Gestion.mapaAlumnos.get(key)).getAsignaturasSuperadas();
+			keys1 = mapa2.keySet();
+			for(int key1 : keys1){
+				panel.add(new JLabel(" "));
+				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
+			}
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel(" "));
 		}
-		keys  = Gestion.mapaProfesores.keySet();
-		for(String key:keys){
-			modelo.addElement(key);
-			modelo.addElement(Gestion.mapaProfesores.get(key).getApellidos()+", "+Gestion.mapaProfesores.get(key).getNombre());
-			modelo.addElement("Fecha de nacimiento: "+Gestion.mapaProfesores.get(key).getFechaNacimiento());
-			modelo.addElement("Departamento: "+((Profesor)Gestion.mapaProfesores.get(key)).getDepartamento());
-			modelo.addElement("Categoria: "+((Profesor)Gestion.mapaProfesores.get(key)).getCategoria());
-			modelo.addElement("Horas asignables: "+((Profesor)Gestion.mapaProfesores.get(key)).getHorasAsignables());
-			((Profesor)Gestion.mapaProfesores.get(key)).stringGrafico(modelo);
-			modelo.addElement(" ");
+		keys = Gestion.mapaProfesores.keySet();
+		for(String key : keys){
+			panel.add(new JLabel("DNI"));
+			panel.add(new JLabel(key));
+			panel.add(new JLabel("Nombre:"));
+			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getNombre()));
+			panel.add(new JLabel("Apellidos"));
+			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getApellidos()));
+			panel.add(new JLabel("Fecha de nacimiento:"));
+			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getFechaNacimiento()));
+			panel.add(new JLabel("Perfil:"));
+			panel.add(new JLabel("Profesor"));
+			panel.add(new JLabel("Departamento:"));
+			panel.add(new JLabel(((Profesor)Gestion.mapaProfesores.get(key)).getDepartamento()));
+			panel.add(new JLabel("Categoria:"));
+			panel.add(new JLabel(((Profesor)Gestion.mapaProfesores.get(key)).getCategoria()));
+			panel.add(new JLabel("Horas Asignables:"));
+			panel.add(new JLabel(Integer.toString(((Profesor)Gestion.mapaProfesores.get(key)).getHorasAsignables())));
+			panel.add(new JLabel("Docencia Impartida:"));
+			panel.add(new JLabel(" "));
+			LinkedHashMap<Integer, Asignatura> mapa = ((Profesor)Gestion.mapaProfesores.get(key)).getDocenciaImpartida();
+			Set<Integer> keys1 = mapa.keySet();
+			for(int key1 : keys1){
+				panel.add(new JLabel(" "));
+				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
+			}
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel(" "));
 		}
-		JList listaAlumnos = new JList(modelo);
-		listaAlumnos.setLayout(new BoxLayout(listaAlumnos, BoxLayout.Y_AXIS));
-		JScrollPane impresion = new JScrollPane(listaAlumnos, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane impresion = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ventana.setBounds(300, 200, 1080, 720);
 		ventana.add(impresion);

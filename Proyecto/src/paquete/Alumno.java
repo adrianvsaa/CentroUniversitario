@@ -4,16 +4,9 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
-import java.awt.GridLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -161,20 +154,7 @@ public class Alumno extends Persona implements Comparable<Alumno>{
 		}
 		return super.toString()+"\n"+aux.format(fechaIngreso.getTime())+"\n"+auxiliarSuperadas+"\n"+auxiliarDocencia;
 	}
-	
-	public void stringGrafico(DefaultListModel modelo){
-		Set<Integer> keys = asignaturasSuperadas.keySet();
-		for(int key : keys){
-			modelo.addElement(Gestion.mapaAsignaturas.get(key).getNombre()+":"+Float.toString(asignaturasSuperadas.get(key).getNota())+
-					"--"+asignaturasSuperadas.get(key).getAnoAcademico());
-		}
-		modelo.addElement("Asignaturas Cursadas:");
-		keys = docenciaRecibida.keySet();
-		for(int key : keys){
-			modelo.addElement(Gestion.mapaAsignaturas.get(key).getNombre());
-		}
-		return;
-	}
+
 	
 	public boolean comprobarEvaluacion(String anoAcademico, int idAsignatura){
 		if(asignaturasSuperadas.get(idAsignatura)==null)

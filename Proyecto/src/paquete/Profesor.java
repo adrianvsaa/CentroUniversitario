@@ -9,8 +9,6 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import javax.swing.DefaultListModel;
-
 public class Profesor extends Persona{
 	private String categoria;
 	private String departamento;
@@ -123,14 +121,6 @@ public class Profesor extends Persona{
 			ponercoma = true;
 		}
 		return super.toString()+"\n"+categoria+"\n"+departamento+"\n"+horasAsignables+"\n"+auxiliarDocencia;
-	}
-	
-	public void stringGrafico(DefaultListModel modelo){
-		Set<Integer> keys = docenciaImpartida.keySet();
-		modelo.addElement("Docencia Impartida");
-		for(int key: keys){
-			modelo.addElement(Gestion.mapaAsignaturas.get(key).getNombre());
-		}
 	}
 	
 	public boolean comprobarAsignacion(int identificador, int idGrupo, char tipoGrupo){
