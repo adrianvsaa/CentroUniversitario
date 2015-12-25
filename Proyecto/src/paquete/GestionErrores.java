@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.Set;
 import java.io.IOException;
+import java.io.File;
 import java.io.FileInputStream;
 
 public class GestionErrores implements Constantes{
@@ -83,6 +84,15 @@ public class GestionErrores implements Constantes{
 		return false;
 	}
 	
+	public static boolean comprobarGrupo(int idAsignatura, char tipoGrupo, Alumno a){
+		LinkedHashMap<Integer, Asignatura> docenciaRecibida = a.getDocenciaRecibida();
+		if(docenciaRecibida.get(idAsignatura)==null)
+			return false;
+		if(docenciaRecibida.get(idAsignatura).comprobarGrupoTipo(tipoGrupo))
+			return true;
+		return false;
+	}
+	
 	public static boolean comprobarCoordinadorDos(String coordinador, LinkedHashMap<Integer, Asignatura> mapaAsignaturas){
 		boolean retorno=true;
 		Set<Integer> keys = mapaAsignaturas.keySet();
@@ -99,8 +109,8 @@ public class GestionErrores implements Constantes{
 		return retorno;
 	}
 	
-	public static boolean comprobarTipoGrupo(String tipo){
-		if(tipo.equals("A")||tipo.equals("B"))
+	public static boolean comprobarTipoGrupo(char tipoGrupo){
+		if((tipoGrupo == 'A') ||(tipoGrupo == 'B'))
 			return true;
 		return false;
 	}
@@ -158,7 +168,7 @@ public class GestionErrores implements Constantes{
 		return retorno;
 	}
 	
-	public static boolean comprobarFicheroNotas(LinkedHashMap<String, Persona> mapaAlumnos, String fichero, int idAsignatura, String anoAcademico)
+	public static boolean comprobarFicheroNotas(LinkedHashMap<String, Persona> mapaAlumnos, File fichero, int idAsignatura, String anoAcademico)
 			throws IOException{
 		boolean retorno = true;
 		int i = 0;

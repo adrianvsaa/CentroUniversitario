@@ -10,18 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Alumnos implements Constantes{
-	public static boolean comprobarGrupo(int idAsignatura, char tipoGrupo, Alumno a){
-		LinkedHashMap<Integer, Asignatura> docenciaRecibida = a.getDocenciaRecibida();
-		if(docenciaRecibida.get(idAsignatura)==null)
-			return false;
-		if(docenciaRecibida.get(idAsignatura).comprobarGrupoTipo(tipoGrupo))
-			return true;
-		return false;
-	}
-	
 	public static void ordenarXNota(String[] instruccion) throws IOException{
 		if(instruccion.length!= 2){
-			Gestion.aviso("Numero de comandos incorrecto");
+			Gestion.aviso(nComandos);
 			return;
 		}
 		List<Persona> lista2= new LinkedList<Persona>(Gestion.mapaAlumnos.values());
@@ -40,55 +31,67 @@ public class Alumnos implements Constantes{
 	}
 	
 	public static void matricular(String[] comando) throws IOException{
-		if(comando.length!=3)
+		if(comando.length!=3) {
 			Gestion.aviso(nComandos);
-		
-		else if(Gestion.mapaAlumnos.get(comando[1].trim())==null)
+			return;
+		}
+		String dni = comando[1].trim(), siglas = comando[2].trim();
+		if(Gestion.mapaAlumnos.get(dni)==null)
 			Gestion.aviso(alInex);
 		
-		else if(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(comando[2]))==null)
+		else if(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas))==null)
 			Gestion.aviso(asInex);
 		
-		else if(((Alumno)Gestion.mapaAlumnos.get(comando[1].trim())).comprobarMatricula(Asignaturas.siglasToIdentificador(comando[2])))
+		else if(((Alumno)Gestion.mapaAlumnos.get(dni)).comprobarMatricula(Asignaturas.siglasToIdentificador(siglas)))
 			Gestion.aviso(alYaMat);
 		
-		else if(!GestionErrores.comprobarRequisitos((Alumno)Gestion.mapaAlumnos.get(comando[1]), Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(comando[2]))))
+		else if(!GestionErrores.comprobarRequisitos((Alumno)Gestion.mapaAlumnos.get(dni), Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas))))
 			Gestion.aviso(noRequisitos);
 		
-		else { ((Alumno)Gestion.mapaAlumnos.get(comando[1])).matricula(new Asignatura(Asignaturas.siglasToIdentificador(comando[2])));
+		else { ((Alumno)Gestion.mapaAlumnos.get(dni)).matricula(new Asignatura(Asignaturas.siglasToIdentificador(siglas)));
 		Gestion.aviso("OK");}
 	}
 	
 	public static void asignarGrupo(String[] comando)throws IOException{
-		if(comando.length!=5)
+		if(comando.length!=5) {
 			Gestion.aviso(nComandos);
-		
-		else if(Gestion.mapaAlumnos.get(comando[1].trim())==null)
+			return;
+		}
+		String dni = comando[1].trim(), siglas = comando[2].trim();
+		int grupo;
+		char tipoGrupo;
+		try{
+			grupo = Integer.parseInt(comando[4].trim());
+			tipoGrupo = comando[3].trim().charAt(0);
+		} catch (Exception e){
+			Gestion.aviso(nComandos);
+			return;
+		}
+		if(Gestion.mapaAlumnos.get(dni)==null)
 			Gestion.aviso(alInex);
 		
-		else if(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(comando[2]))==null)
+		else if(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas))==null)
 			Gestion.aviso(asInex);
 		
-		else if(!((Alumno)Gestion.mapaAlumnos.get(comando[1].trim())).comprobarMatricula(Asignaturas.siglasToIdentificador(comando[2])))
+		else if(!((Alumno)Gestion.mapaAlumnos.get(dni)).comprobarMatricula(Asignaturas.siglasToIdentificador(siglas)))
 			Gestion.aviso(alNoMat);
 		
-		else if(!GestionErrores.comprobarTipoGrupo(comando[3].trim()))
+		else if(!GestionErrores.comprobarTipoGrupo(tipoGrupo))
 			Gestion.aviso(tGruInc);
 		
-		else if(!Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(comando[2])).comprobarGrupo(Integer.parseInt(comando[4].trim()),
-				comando[3].trim().toCharArray()[0]))
+		else if(!Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas)).comprobarGrupo( grupo, tipoGrupo))
 			Gestion.aviso(gInex);
 		
-		else if(!GestionErrores.comprobarSolapeAlumno((Alumno)Gestion.mapaAlumnos.get(comando[1].trim()), Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(comando[2])),
-				Gestion.mapaAsignaturas,comando[3].trim().toCharArray()[0], Integer.parseInt(comando[4].trim())))
+		else if(!GestionErrores.comprobarSolapeAlumno((Alumno)Gestion.mapaAlumnos.get(dni), Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas)),
+				Gestion.mapaAsignaturas, tipoGrupo, grupo))
 			Gestion.aviso(solape);
 		
-		else if(Alumnos.comprobarGrupo(Asignaturas.siglasToIdentificador(comando[2]), comando[3].trim().charAt(0), (Alumno)Gestion.mapaAlumnos.get(comando[1].trim())))
-			Gestion.aviso("El alumno ya esta matriculado en un grupo de tipo "+comando[3].trim().toCharArray()[0]+" de esta asignatura");
+		else if(GestionErrores.comprobarGrupo(Asignaturas.siglasToIdentificador(siglas), tipoGrupo, (Alumno)Gestion.mapaAlumnos.get(dni)))
+			Gestion.aviso("El alumno ya esta matriculado en un grupo de tipo "+tipoGrupo+" de esta asignatura");
 	
 		else {
-			((Alumno)Gestion.mapaAlumnos.get(comando[1].trim())).asignarGrupo(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(comando[2])),
-		comando[3].trim().charAt(0), Integer.parseInt(comando[4].trim()));
+			((Alumno)Gestion.mapaAlumnos.get(dni)).asignarGrupo(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas)),
+		tipoGrupo, grupo);
 		Gestion.aviso("OK");
 		}
 	}
@@ -100,33 +103,35 @@ public class Alumnos implements Constantes{
 			return;
 		}
 		File notas = new File(comando[3].trim());
-		if(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(comando[1].trim()))==null)
+		String siglas = comando[1].trim(), cursoAcademico = comando[2].trim();
+		if(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas))==null)
 			Gestion.aviso(asInex);
 		
 		else if(!notas.exists())
 			Gestion.aviso(fNotas);
 		
-		else if(!GestionErrores.comprobarEvaluacionAlumno(Gestion.mapaAlumnos, comando[2], Asignaturas.siglasToIdentificador(comando[1].trim())))
+		else if(!GestionErrores.comprobarEvaluacionAlumno(Gestion.mapaAlumnos, cursoAcademico, Asignaturas.siglasToIdentificador(siglas)))
 			Gestion.aviso(yaEvaluada);
 		
 		else 
-			GestionErrores.comprobarFicheroNotas(Gestion.mapaAlumnos, comando[3].trim(), Asignaturas.siglasToIdentificador(comando[1].trim()),
-				comando[2].trim());
+			GestionErrores.comprobarFicheroNotas(Gestion.mapaAlumnos, notas, Asignaturas.siglasToIdentificador(siglas),	cursoAcademico);
 	}
 	
 	
 	public static void obtenerExpediente(String[] comando) throws IOException{
-		if(comando.length!=3)
+		if(comando.length!=3) {
 			Gestion.aviso(nComandos);
-		
-		else if(Gestion.mapaAlumnos.get(comando[1].trim())==null)
+			return;
+		}
+		String dni = comando[1], fichero = comando[2];
+		if(Gestion.mapaAlumnos.get(dni)==null)
 			Gestion.aviso(alInex);
 		
-		else if(!GestionErrores.comprobarExpediente(((Alumno)Gestion.mapaAlumnos.get(comando[1].trim())).getAsignaturasSuperadas()))
+		else if(!GestionErrores.comprobarExpediente(((Alumno)Gestion.mapaAlumnos.get(dni)).getAsignaturasSuperadas()))
 			Gestion.aviso(eVacio);
 		
 		else {
-			((Alumno)Gestion.mapaAlumnos.get(comando[1].trim())).expediente(comando[2].trim(), Gestion.mapaAsignaturas);
+			((Alumno)Gestion.mapaAlumnos.get(dni)).expediente(fichero, Gestion.mapaAsignaturas);
 			Gestion.aviso("OK");
 		}
 	}

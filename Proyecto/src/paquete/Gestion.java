@@ -76,7 +76,7 @@ public class Gestion implements Constantes{
 						break;
 					case "InsertaAsignatura":
 						aviso(insertaAsignatura);
-						Asignaturas.añadir(instruccion.trim().split("\\s+"));
+						Asignaturas.añadir(instruccion);
 						break;
 					default:
 						aviso(cIncorrecto);

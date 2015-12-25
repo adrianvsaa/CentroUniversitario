@@ -26,7 +26,7 @@ public abstract class Personas implements Constantes{
 				String dni = entrada.nextLine().trim();
 				String nombre = entrada.nextLine().trim();
 				String apellidos = entrada.nextLine().trim();
-				Calendar fechaNacimiento = Gestion.stringToCalendar(entrada.nextLine());
+				Calendar fechaNacimiento = Gestion.stringToCalendar(entrada.nextLine().trim());
 				if(auxiliar.trim().equals("alumno")){
 					Calendar fechaIngreso = Gestion.stringToCalendar(entrada.nextLine().trim());
 					String asignaturasSuperadas = entrada.nextLine().trim();
@@ -52,38 +52,49 @@ public abstract class Personas implements Constantes{
 	}
 	
 	public static void añadir(String instruccion, LinkedHashMap<String, Persona> mapa) throws IOException{
-		String[] token = instruccion.trim().split("\"");
-		String[] comando1 = token[0].trim().split("\\s+");
+		String[] token;
+		String[] comando1;
+		String[] comando2;
+		try{
+		token = instruccion.trim().split("\"");
+		comando1 = token[0].trim().split("\\s+");
+		comando2 = token[4].trim().split("\\s+");
+		} catch (Exception e){
+			Gestion.aviso(nComandos);
+			return;
+		}
 		Persona p;
 		if(token.length!=7&&token.length!=5){
 			Gestion.aviso(nComandos);
 			return;
 		}
-		if(!GestionErrores.comprobarDNI(comando1[2])){
+		String perfil = comando1[1].trim(), dni = comando1[2].trim(), nombre = token[1].trim(), apellidos = token[3].trim(),
+				fecha1 = comando2[0].trim();
+		if(!GestionErrores.comprobarDNI(dni)){
 			Gestion.aviso("DNI incorrecto");
 			return;
 		}	
-			if(comando1[1].equals("alumno")){
-				String[] comando2 = token[4].trim().split("\\s+");
-				Calendar fecha = Gestion.stringToCalendar(comando2[0]);
+			if(perfil.equals("alumno")){
 				if(comando1.length!=3||comando2.length!=2||token.length!=5){
 					Gestion.aviso(nComandos);
 					return;
 				}
+				Calendar fecha = Gestion.stringToCalendar(fecha1);
+				String fecha2 = comando2[1].trim();
 				if(!GestionErrores.comprobarFecha(fecha)){
 					Gestion.aviso(fechaIncorrecta);
 					return;
 				}
-				Calendar fechaIngreso = Gestion.stringToCalendar(comando2[1]);
+				Calendar fechaIngreso = Gestion.stringToCalendar(fecha2);
 				if(!GestionErrores.comprobarFechaIngreso(fechaIngreso, fecha)){
 					Gestion.aviso(fechaIncorrecta);
 					return;
 				}
-				if(mapa.get(comando1[2])!=null){
+				if(mapa.get(dni)!=null){
 					Gestion.aviso(alExi);
 					return;
 				}
-				p = new Alumno(comando1[2], token[1], token[3], fecha, fechaIngreso);
+				p = new Alumno(dni, nombre, apellidos, fecha, fechaIngreso);
 				Gestion.aviso("OK");
 			}
 			else{
@@ -91,21 +102,29 @@ public abstract class Personas implements Constantes{
 					Gestion.aviso(nComandos);
 					return;
 				}
-				Calendar fecha = Gestion.stringToCalendar(token[4].trim().split(" ")[1]);
+				String categoria = comando2[1], departamento = token[5].trim();
+				int horasAsignables;
+				try{
+					horasAsignables = Integer.parseInt(token[6].trim());
+				} catch(Exception e){
+					Gestion.aviso(nComandos);
+					return;
+				}
+				Calendar fecha = Gestion.stringToCalendar(token[4].trim().split("\\s+")[1]);
 				if(!GestionErrores.comprobarFecha(fecha)){
 					Gestion.aviso(fechaIncorrecta);
 					return;
 				}
-				if(!GestionErrores.comprobarHorasAsignables(Integer.parseInt(token[6].trim()), token[4].trim().trim().split("\\s+")[0])){
+				if(!GestionErrores.comprobarHorasAsignables(horasAsignables, categoria)){
 					Gestion.aviso(hoInc);
 					return;
 				}
-				if(mapa.get(comando1[2])!=null){
+				if(mapa.get(dni)!=null){
 					Gestion.aviso(prExi);
 					return;
 				}
-				p =  new Profesor(comando1[2], token[1].trim(), token[3].trim(), fecha, token[4].trim().split("\\s+")[0], 
-						token[5].trim(), Integer.parseInt(token[6].trim()));
+				p =  new Profesor(dni, nombre, apellidos, fecha, categoria, 
+						departamento, horasAsignables);
 				Gestion.aviso("OK");
 			}
 		mapa.put(p.getDNI(), p);
@@ -137,38 +156,49 @@ public abstract class Personas implements Constantes{
 	public static void mostrarPantalla(){
 		Set<String> keys = Gestion.mapaAlumnos.keySet();
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(13*(Gestion.mapaAlumnos.size()+Gestion.mapaProfesores.size()), 2,0,0 ));
+		panel.setLayout(new GridLayout(0, 3, 1, 1 ));
 		JFrame ventana =  new JFrame();
-		ventana.setLayout(new GridLayout(1,1,0,0));
 		for(String key:keys){
 			panel.add(new JLabel("DNI"));
 			panel.add(new JLabel(key));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Nombre:"));
 			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getNombre()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Apellidos:"));
 			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getApellidos()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Perfil:"));
 			panel.add(new JLabel("Alumno"));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Fecha de nacimiento:"));
 			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getFechaNacimiento()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Fecha de Ingreso:"));
 			panel.add(new JLabel(((Alumno)Gestion.mapaAlumnos.get(key)).getFechaIngreso()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Asignaturas matriculado:"));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 			LinkedHashMap<Integer, Asignatura> mapa1 = ((Alumno)Gestion.mapaAlumnos.get(key)).getDocenciaRecibida();
 			Set<Integer> keys1 = mapa1.keySet();
 			for(int key1 : keys1){
 				panel.add(new JLabel(" "));
 				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
+				panel.add(new JLabel(" "));
 			}
 			panel.add(new JLabel("Asignaturas superadas:"));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 			LinkedHashMap<Integer, Nota> mapa2 = ((Alumno)Gestion.mapaAlumnos.get(key)).getAsignaturasSuperadas();
 			keys1 = mapa2.keySet();
 			for(int key1 : keys1){
 				panel.add(new JLabel(" "));
 				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
+				panel.add(new JLabel(Float.toString(mapa2.get(key1).getNota())));
 			}
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
@@ -178,28 +208,40 @@ public abstract class Personas implements Constantes{
 		for(String key : keys){
 			panel.add(new JLabel("DNI"));
 			panel.add(new JLabel(key));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Nombre:"));
 			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getNombre()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Apellidos"));
 			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getApellidos()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Fecha de nacimiento:"));
 			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getFechaNacimiento()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Perfil:"));
 			panel.add(new JLabel("Profesor"));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Departamento:"));
 			panel.add(new JLabel(((Profesor)Gestion.mapaProfesores.get(key)).getDepartamento()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Categoria:"));
 			panel.add(new JLabel(((Profesor)Gestion.mapaProfesores.get(key)).getCategoria()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Horas Asignables:"));
 			panel.add(new JLabel(Integer.toString(((Profesor)Gestion.mapaProfesores.get(key)).getHorasAsignables())));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Docencia Impartida:"));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 			LinkedHashMap<Integer, Asignatura> mapa = ((Profesor)Gestion.mapaProfesores.get(key)).getDocenciaImpartida();
 			Set<Integer> keys1 = mapa.keySet();
 			for(int key1 : keys1){
 				panel.add(new JLabel(" "));
 				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
+				panel.add(new JLabel(" "));
 			}
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));

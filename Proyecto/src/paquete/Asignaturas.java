@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.Set;
 
-public class Asignaturas {
+public class Asignaturas implements Constantes{
 	private static File fichero = new File("asignaturas.txt");
 	
 	public static void poblar() throws FileNotFoundException{
@@ -38,7 +38,46 @@ public class Asignaturas {
 		}
 	}
 	
-	public static void añadir(String[] instruccion){
+	public static void añadir(String instruccion) throws IOException{
+		String[] token = instruccion.trim().split("\"");
+		if(token.length!=8){
+			Gestion.aviso(nComandos);
+			return;
+		}
+		String nombre = token[1];
+		String[] comando1 = token[0].trim().split("\\s+"), comando2 = token[2].trim().split(" ");
+		if(comando1.length!=2||comando2.length!=3||comando2.length!=2){
+			Gestion.aviso(nComandos);
+			return;
+		}
+		String coordinador, siglas = comando2[0];
+		if(comando2.length==2)
+			coordinador = "";
+		else
+			coordinador = comando2[2].trim();
+		int id, curso;
+		try { 
+		id = Integer.parseInt(comando1[1]);
+		curso = Integer.parseInt(comando2[1].trim());
+		} catch(Exception e){
+			Gestion.aviso(nComandos);
+			return;
+		}
+		
+		if(Gestion.mapaAsignaturas.get(id)!=null)
+			Gestion.aviso(asExi);
+		
+		else if(Gestion.mapaProfesores.get(coordinador)==null)
+			Gestion.aviso(prInex);
+		
+		else if(Gestion.mapaAsignaturas.get(siglasToIdentificador(siglas))!=null)
+			Gestion.aviso(siExis);
+	
+		else {
+			Gestion.mapaAsignaturas.put(id, new Asignatura(id, nombre, siglas, curso, coordinador, token[3], token[5], token[7]));
+			Gestion.aviso("OK");
+		}
+		
 		
 	}
 	
@@ -57,24 +96,29 @@ public class Asignaturas {
 	}
 	
 	public static void asignarCoordinador(String[] comando) throws IOException{
-		if(Gestion.mapaProfesores.get(comando[1])==null){
-			Gestion.aviso("Profesor inexistente");
+		if(comando.length!=3){
+			Gestion.aviso(nComandos);
 			return;
 		}
-		if(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(comando[2]))==null){
-			Gestion.aviso("Asignatura Inexistente");
-			return;
+		String dni = comando[1].trim(), siglas = comando[2].trim();
+		
+		if(Gestion.mapaProfesores.get(dni)==null)
+			Gestion.aviso(prInex);
+		
+		else if(Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas))==null)
+			Gestion.aviso(asInex);
+		
+		else if(!GestionErrores.comprobarTitularidad((Profesor)Gestion.mapaProfesores.get(dni)))
+			Gestion.aviso(noTit);
+	
+		else if(!GestionErrores.comprobarCoordinadorDos(dni, Gestion.mapaAsignaturas))
+			Gestion.aviso(coorDos);
+		
+		else {
+			Gestion.mapaAsignaturas.get(siglasToIdentificador(siglas)).setCoordinador(dni);
+			Gestion.aviso("OK");
 		}
-		if(!GestionErrores.comprobarTitularidad((Profesor)Gestion.mapaProfesores.get(comando[1]))){
-			Gestion.aviso("Profesor no titular");
-			return;
-		}
-		if(!GestionErrores.comprobarCoordinadorDos(comando[1], Gestion.mapaAsignaturas)){
-			Gestion.aviso("Profesor ya es coordinador de dos materias");
-			return;
-		}
-		Gestion.mapaAsignaturas.get(siglasToIdentificador(comando[2])).setCoordinador(comando[1]);
-		Gestion.aviso("OK");
+		
 		
 	}
 	
