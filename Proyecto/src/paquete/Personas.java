@@ -1,5 +1,6 @@
 package paquete;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -157,23 +158,10 @@ public abstract class Personas implements Constantes{
 		Set<String> keys = Gestion.mapaAlumnos.keySet();
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(0, 3, 1, 1 ));
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		JFrame ventana =  new JFrame();
 		for(String key:keys){
-			panel.add(new JLabel("DNI"));
-			panel.add(new JLabel(key));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Nombre:"));
-			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getNombre()));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Apellidos:"));
-			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getApellidos()));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Perfil:"));
-			panel.add(new JLabel("Alumno"));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Fecha de nacimiento:"));
-			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getFechaNacimiento()));
-			panel.add(new JLabel(" "));
+			mostrarPantallaGeneral(key, Gestion.mapaAlumnos, "alumno", panel);
 			panel.add(new JLabel("Fecha de Ingreso:"));
 			panel.add(new JLabel(((Alumno)Gestion.mapaAlumnos.get(key)).getFechaIngreso()));
 			panel.add(new JLabel(" "));
@@ -190,12 +178,11 @@ public abstract class Personas implements Constantes{
 			panel.add(new JLabel("Asignaturas superadas:"));
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
-			LinkedHashMap<Integer, Nota> mapa2 = ((Alumno)Gestion.mapaAlumnos.get(key)).getAsignaturasSuperadas();
-			keys1 = mapa2.keySet();
+			keys1 = ((Alumno)Gestion.mapaAlumnos.get(key)).getAsignaturasSuperadas().keySet();
 			for(int key1 : keys1){
 				panel.add(new JLabel(" "));
 				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
-				panel.add(new JLabel(Float.toString(mapa2.get(key1).getNota())));
+				panel.add(new JLabel(Float.toString(((Alumno)Gestion.mapaAlumnos.get(key)).getAsignaturasSuperadas().get(key1).getNota())));
 			}
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
@@ -204,23 +191,10 @@ public abstract class Personas implements Constantes{
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 		}
+		
 		keys = Gestion.mapaProfesores.keySet();
 		for(String key : keys){
-			panel.add(new JLabel("DNI"));
-			panel.add(new JLabel(key));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Nombre:"));
-			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getNombre()));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Apellidos"));
-			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getApellidos()));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Fecha de nacimiento:"));
-			panel.add(new JLabel(Gestion.mapaProfesores.get(key).getFechaNacimiento()));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Perfil:"));
-			panel.add(new JLabel("Profesor"));
-			panel.add(new JLabel(" "));
+			mostrarPantallaGeneral(key, Gestion.mapaProfesores, "profesor", panel);
 			panel.add(new JLabel("Departamento:"));
 			panel.add(new JLabel(((Profesor)Gestion.mapaProfesores.get(key)).getDepartamento()));
 			panel.add(new JLabel(" "));
@@ -238,7 +212,13 @@ public abstract class Personas implements Constantes{
 			for(int key1 : keys1){
 				panel.add(new JLabel(" "));
 				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
-				panel.add(new JLabel(" "));
+				String aux = " ";
+				for(int i = 0; i<mapa.get(key1).getGrupos().size(); i++){
+					if(i!=0)
+						aux+= ";";
+					aux += Integer.toString(mapa.get(key1).getGrupos().get(i).getIdentificador())+mapa.get(key1).getGrupos().get(i).getTipo();
+				}
+				panel.add(new JLabel(aux));
 			}
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
@@ -247,11 +227,32 @@ public abstract class Personas implements Constantes{
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 		}
+		panel.setBackground(Color.CYAN);
 		JScrollPane impresion = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		ventana.setBounds(300, 200, 1080, 720);
+		ventana.setSize(1080, 720);
+		ventana.setLocationRelativeTo(null);
 		ventana.add(impresion);
 		ventana.setResizable(false);
 		ventana.setVisible(true);
 	}
+	
+	public static void mostrarPantallaGeneral(String key, LinkedHashMap<String, Persona> mapa, String perfil, JPanel panel){
+		panel.add(new JLabel("DNI"));
+		panel.add(new JLabel(key));
+		panel.add(new JLabel(" "));
+		panel.add(new JLabel("Nombre:"));
+		panel.add(new JLabel(mapa.get(key).getNombre()));
+		panel.add(new JLabel(" "));
+		panel.add(new JLabel("Apellidos:"));
+		panel.add(new JLabel(mapa.get(key).getApellidos()));
+		panel.add(new JLabel(" "));
+		panel.add(new JLabel("Perfil:"));
+		panel.add(new JLabel("Alumno"));
+		panel.add(new JLabel(" "));
+		panel.add(new JLabel("Fecha de nacimiento:"));
+		panel.add(new JLabel(mapa.get(key).getFechaNacimiento()));
+		panel.add(new JLabel(" "));
+	}
+	
 }
