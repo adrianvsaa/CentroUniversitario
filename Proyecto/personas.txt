@@ -1,56 +1,56 @@
 profesor 
-33218765X 
+33218765A
 Carlos 
-PÈrez S·chez 
+P√©rez S√°chez 
 07/09/1966 
 titular 
-IngenierÌa Telem·tica 
+Ingenier√≠a Telem√°tica 
 14
 12 A 1 
 *
 alumno 
-53456789J 
+53456789M 
 Mauro  
-Alonso DomÌnguez 
+Alonso Dom√≠nguez 
 08/01/1996 
 01/09/2014 
 8 14/15 6.8; 9 14/15 5.5 
 11; 12 B 2
 *
 alumno
-51567824V
+51567824F
 Susana
-Prieto V·zquez
+Prieto V√°zquez
 28/5/1994
 03/09/2012
 8 12/13 7.6; 9 12/13 6.2; 12 13/14 5.8; 18 13/14 7.2
 34 A 1; 34 B 1
 *
 profesor
-37834521S
-JosÈ
-Casas DomÌnguez
+37834521G
+Jos√©
+Casas Dom√≠nguez
 17/11/1972
 asociado
-Matem·tica Aplicada
+Matem√°tica Aplicada
 10
 8 A 1; 8 A 2; 8 B 1; 8 B 2; 8 B 3
 *
 alumno
-56534219T
-MarÌa Luisa
-Castro AntÛn
+56534219N
+Mar√≠a Luisa
+Castro Ant√≥n
 11/11/1997
 02/09/2015
   
 8 A 3
 *
 profesor
-45632109M
-SofÌa
-Carbajal MartÌnez
+45632109V
+Sof√≠a
+Carbajal Mart√≠nez
 17/08/1970
 titular
-TeorÌa de la SeÒal y Comunicaciones
+Teor√≠a de la Se√±al y Comunicaciones
 15
 9 A 1 

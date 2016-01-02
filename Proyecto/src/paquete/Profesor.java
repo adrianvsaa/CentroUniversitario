@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -87,6 +88,7 @@ public class Profesor extends Persona{
 	}
 	
 	public void obtenerCalendario(String fichero, LinkedHashMap<Integer, Asignatura> mapaAsignaturas) throws IOException{
+		ArrayList<Grupo> aux = new ArrayList<Grupo>();
 		File archivo = new File(fichero);
 		BufferedWriter salida = new BufferedWriter(new FileWriter(archivo));
 		salida.write("Dia\t Hora\t Asignatura\t Tipo grupo\t Id grupo\n");
@@ -97,11 +99,17 @@ public class Profesor extends Persona{
 			for(int i = 0; i<gruposProfesor.size(); i++){
 				for(int j=0; j<grupos.size(); j++){
 					if(grupos.get(j).getIdentificador()==gruposProfesor.get(i).getIdentificador()&&gruposProfesor.get(i).getTipo()==grupos.get(j).getTipo()){
-						salida.write(grupos.get(j).getDia()+"; "+grupos.get(j).getHoraEntrada()+" ;"+mapaAsignaturas.get(key).getSiglas()+"; "+
-					grupos.get(j).getTipo()+"; "+grupos.get(j).getIdentificador()+"\n");
+						aux.add(grupos.get(j));
+						//salida.write(grupos.get(j).getDia()+"; "+grupos.get(j).getHoraEntrada()+" ;"+mapaAsignaturas.get(key).getSiglas()+"; "+
+					//grupos.get(j).getTipo()+"; "+grupos.get(j).getIdentificador()+"\n");
 					}
 				}
 			}
+			Collections.sort(aux, new ComparadorHora());
+			Collections.sort(aux);
+			for(int j=0; j<aux.size(); j++)
+				salida.write(aux.get(j).getDia()+"; "+aux.get(j).getHoraEntrada()+" ;"+mapaAsignaturas.get(key).getSiglas()+"; "+
+						aux.get(j).getTipo()+"; "+aux.get(j).getIdentificador()+"\n");
 		}
 		salida.close();
 	}

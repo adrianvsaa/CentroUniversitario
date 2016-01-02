@@ -1,6 +1,7 @@
 package paquete;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -111,7 +112,7 @@ public abstract class Personas implements Constantes{
 					Gestion.aviso(nComandos);
 					return;
 				}
-				Calendar fecha = Gestion.stringToCalendar(token[4].trim().split("\\s+")[1]);
+				Calendar fecha = Gestion.stringToCalendar(fecha1);
 				if(!GestionErrores.comprobarFecha(fecha)){
 					Gestion.aviso(fechaIncorrecta);
 					return;
@@ -156,8 +157,9 @@ public abstract class Personas implements Constantes{
 	
 	public static void mostrarPantalla(){
 		Set<String> keys = Gestion.mapaAlumnos.keySet();
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(0, 3, 1, 1 ));
+		JPanelBackground  panel = new JPanelBackground();
+		panel.setBackground("fondo.png");
+		panel.setLayout(new GridLayout(0, 3, 0, 0 ));
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		JFrame ventana =  new JFrame();
 		for(String key:keys){
@@ -227,7 +229,6 @@ public abstract class Personas implements Constantes{
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 		}
-		panel.setBackground(Color.CYAN);
 		JScrollPane impresion = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ventana.setSize(1080, 720);

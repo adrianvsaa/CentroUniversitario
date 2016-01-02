@@ -27,7 +27,11 @@ public class Gestion implements Constantes{
 		else{
 			Calendar fechaActual = Calendar.getInstance();
 			SimpleDateFormat formatoFecha = new SimpleDateFormat("HH:mm   dd/MM/YYYY");
-			aviso("\n\nNueva Ejecucion:\t"+formatoFecha.format(fechaActual.getTime())+"\n");
+			File avisos = new File("avisos.txt");
+			if(avisos.exists())
+				aviso("\n\nNueva Ejecucion:\t"+formatoFecha.format(fechaActual.getTime())+"\n");
+			else
+				aviso("Nueva Ejecucion:\t"+formatoFecha.format(fechaActual.getTime())+"\n");
 			Scanner entradaInstrucciones = new Scanner(new FileInputStream("ejecucion.txt"));
 			while(entradaInstrucciones.hasNext()){
 				String instruccion = entradaInstrucciones.nextLine();
@@ -87,8 +91,8 @@ public class Gestion implements Constantes{
 			}
 			entradaInstrucciones.close();
 		}
-		Personas.imprimir();
-		Asignaturas.imprimir();
+		//Personas.imprimir();
+		//Asignaturas.imprimir();
 	}
 	
 	public static void aviso(String aviso)throws IOException{

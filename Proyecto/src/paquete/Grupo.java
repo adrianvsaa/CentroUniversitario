@@ -1,9 +1,10 @@
 package paquete;
 
 import java.util.Calendar;
+import java.util.Comparator;
 import java.text.SimpleDateFormat;
 
-public class Grupo {
+public class Grupo implements Comparable<Grupo>{
 	private int identificador;
 	private char tipo;
 	private char dia;
@@ -65,5 +66,36 @@ public class Grupo {
 	public String toString(){
 		return Integer.toString(identificador)+" "+tipo;
 	}
+	
+	public int compareTo(Grupo g){
+		if(getDia()=='L'&&(g.getDia()=='M'||g.getDia()=='X'||g.getDia()=='J'||g.getDia()=='V'))
+			return -1;
+		else if(getDia()=='M'&&g.getDia()=='L')
+			return 1;
+		else if(getDia()=='M'&&(g.getDia()=='X'||g.getDia()=='J'||g.getDia()=='V'))
+			return -1;
+		else if(getDia()=='X'&&(g.getDia()=='M'||g.getDia()=='L'))
+			return 1;
+		else if(getDia()=='X'&&(g.getDia()=='J'||g.getDia()=='V'))
+			return -1;
+		else if(getDia()=='J'&&(g.getDia()=='M'||g.getDia()=='L'||g.getDia()=='X'))
+			return 1;
+		else if(getDia()=='J'&&g.getDia()=='V')
+			return -1;
+		else if(getDia()=='V'&&g.getDia()=='L'||g.getDia()=='M'||g.getDia()=='X'||g.getDia()=='J')
+			return 1;
+		else 
+			return 0;
+			
+	}
 
+}
+
+class ComparadorHora implements Comparator<Grupo>{
+	public int compare(Grupo g1, Grupo g2){
+		if(g1.getHoraEntrada()<g2.getHoraEntrada())
+			return -1;
+		else
+			return 1;
+	}
 }
