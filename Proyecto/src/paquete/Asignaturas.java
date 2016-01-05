@@ -6,13 +6,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.Set;
 
 public class Asignaturas implements Constantes{
 	private static File fichero = new File("asignaturas.txt");
+	
+	/**
+	 * Metodo que abre el fichero asignaturas y con el contenido de ese fichero crea el mapa de asignaturas
+	 * @throws FileNotFoundException excepcion en caso de no encontrar el archivo
+	 */
 	
 	public static void poblar() throws FileNotFoundException{
 		if(!fichero.exists()){
@@ -38,7 +42,14 @@ public class Asignaturas implements Constantes{
 		}
 	}
 	
-	public static void añadir(String instruccion) throws IOException{
+	/**
+	 * Metodo que recibe una instruccion la desgloba entre parametros comprueba si los parametros son correctos y si la 
+	 * instruccion se puede ejecutar en ese caso añade una asignatura al mapa
+	 * @param instruccion variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
+	
+	public static void anadir(String instruccion) throws IOException{
 		String[] token = instruccion.trim().split("\"");
 		if(token.length!=8){
 			Gestion.aviso(nComandos);
@@ -46,7 +57,7 @@ public class Asignaturas implements Constantes{
 		}
 		String nombre = token[1];
 		String[] comando1 = token[0].trim().split("\\s+"), comando2 = token[2].trim().split(" ");
-		if(comando1.length!=2||comando2.length!=3||comando2.length!=2){
+		if(comando1.length!=2||comando2.length!=3){
 			Gestion.aviso(nComandos);
 			return;
 		}
@@ -71,7 +82,7 @@ public class Asignaturas implements Constantes{
 			Gestion.aviso(prInex);
 		
 		else if(Gestion.mapaAsignaturas.get(siglasToIdentificador(siglas))!=null)
-			Gestion.aviso(siExis);
+			Gestion.aviso(siExis+" o identidicador ya en uso");
 	
 		else {
 			Gestion.mapaAsignaturas.put(id, new Asignatura(id, nombre, siglas, curso, coordinador, token[3], token[5], token[7]));
@@ -80,6 +91,11 @@ public class Asignaturas implements Constantes{
 		
 		
 	}
+	
+	/**
+	 * Metodo que imprime el mapa de asignaturas en su correspondiente fichero con su correspondiente formato
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	
 	public static void imprimir() throws IOException{
 		BufferedWriter salida = new BufferedWriter(new FileWriter(fichero));
@@ -94,6 +110,13 @@ public class Asignaturas implements Constantes{
 		}
 		salida.close();
 	}
+	
+	/**
+	 * Metodo que recibe unos parametros de una instruccion comprueba si los datos son correctos y en caso de ser correctos 
+	 * y en caso de ser correctos llama al metodo setCoordinador del objeto asignatura 
+	 * @param comando variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	
 	public static void asignarCoordinador(String[] comando) throws IOException{
 		if(comando.length!=3){
@@ -122,6 +145,13 @@ public class Asignaturas implements Constantes{
 		
 	}
 	
+	/**
+	 * parametro que recibe un string correspondiente con lo que deberian ser las siglas de una asignatura, comprueba que eso sea correcto
+	 * en caso de serlo retorno el identificador correspondiente a la asignatura con esas siglas en otro caso retorna 0
+	 * @param siglas parametro tipo String con las siglas de una asignatura
+	 * @return identificador
+	 */
+	
 	public static int siglasToIdentificador(String siglas){
 		LinkedHashMap<Integer, Asignatura> mapaAsignaturas = Gestion.mapaAsignaturas;
 		Set<Integer> keys = mapaAsignaturas.keySet();
@@ -135,36 +165,5 @@ public class Asignaturas implements Constantes{
 		if(a==null)
 			return 0;
 		return a.getIdentificador();
-	}
-	
-	public static boolean comprobarHorario(Set<Integer> keys, int horaEntrada, int horaSalida, char dia, Persona p){
-		boolean opcion = true;
-		LinkedHashMap<Integer, Asignatura> mapa;
-		if(p instanceof Alumno)
-			mapa = ((Alumno)p).getDocenciaRecibida();
-		else
-			mapa = ((Profesor)p).getDocenciaImpartida();
-		for(int key:keys){
-			ArrayList<Grupo> grupos = Gestion.mapaAsignaturas.get(key).getGrupos();
-			ArrayList<Grupo> gruposPersona = mapa.get(key).getGrupos();
-			for(int i=0; i<gruposPersona.size(); i++){
-				for(int j=0; j<grupos.size(); j++){
-					if(gruposPersona.get(i).getIdentificador()==grupos.get(j).getIdentificador()&&gruposPersona.get(i).getTipo()==
-							grupos.get(j).getTipo()){
-						if(grupos.get(j).getDia()!=dia)
-							continue;
-						else{
-							if(grupos.get(j).getHoraEntrada()==horaEntrada||horaEntrada-grupos.get(j).getHoraSalida()<0){
-								opcion = false;
-								break;
-							}
-						}
-					}
-				}
-			}
-			if(!opcion)
-				break;		
-		}
-		return opcion;
 	}
 }

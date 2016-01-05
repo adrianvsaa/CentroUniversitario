@@ -16,22 +16,45 @@ public abstract class Persona {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 	
+	/**
+	 * Metodo que retorna el nombre de la persona
+	 * @return nombre
+	 */
 	public String getNombre(){
 		return nombre;
 	}
+	
+	/**
+	 * Metodo que retorna los apellidos de la persona
+	 * @return apellidos
+	 */
 	
 	public String getApellidos(){
 		return apellidos;
 	}
 	
+	/**
+	 * Metodo que retorna el dni de la persona
+	 * @return dni
+	 */
+	
 	public String getDNI(){
 		return dni;
 	}
+	
+	/**
+	 * Metodo que retorna la fecha de nacimiento en string
+	 * @return fechaNacimiento
+	 */
 	
 	public String getFechaNacimiento(){
 		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");
 		return aux.format(fechaNacimiento.getTime());
 	}
+	
+	/**
+	 * Metodo que retorna la persona como un String
+	 */
 	
 	public String toString(){
 		SimpleDateFormat aux = new SimpleDateFormat("dd/MM/YYYY");

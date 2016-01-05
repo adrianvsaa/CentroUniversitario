@@ -1,6 +1,10 @@
 package paquete;
 
 public interface Constantes {
+	/**^
+	 * Interfaz creada para usar las variables creadas en el programa como constantes
+	 */
+	
 	//Constantes para comandos
 	String insertaPersona = "IP\t\t--\t";
 	String asignaCoordinador = "ACOORD\t--\t";

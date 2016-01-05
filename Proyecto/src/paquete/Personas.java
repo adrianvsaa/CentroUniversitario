@@ -1,7 +1,5 @@
 package paquete;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,6 +15,13 @@ import javax.swing.*;
 
 public abstract class Personas implements Constantes{
 	private static File fichero = new File("personas.txt");
+	
+	/**
+	 * Metodo que abre el fichero personas y con el contenido de ese fichero crea los mapas correspondientes a las personas
+	 * el mapa de alumnos y el mapa de profesores
+	 * @throws FileNotFoundException exepcion en caso de no encontrar el archivo
+	 */
+	
 	public static void poblar() throws FileNotFoundException{
 		if(!fichero.exists()){
 					
@@ -53,7 +58,15 @@ public abstract class Personas implements Constantes{
 		}
 	}
 	
-	public static void añadir(String instruccion, LinkedHashMap<String, Persona> mapa) throws IOException{
+	/**
+	 * Metodo que recibe una instruccion y un mapa desglosa la instruccion y comprueba si es correcta y en caso de ser correcta 
+	 * inserta la persona en el mapa correspondiente
+	 * @param instruccion variable que contiene la operacion que se desea ejecutar
+	 * @param mapa coleccion de personas
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
+	
+	public static void anadir(String instruccion, LinkedHashMap<String, Persona> mapa) throws IOException{
 		String[] token;
 		String[] comando1;
 		String[] comando2;
@@ -132,6 +145,11 @@ public abstract class Personas implements Constantes{
 		mapa.put(p.getDNI(), p);
 	}
 	
+	/**
+	 * Metodo que imprime los mapas de personas en el fichero de personas con su correspondiente formato
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
+	
 	public static void imprimir() throws IOException{
 		BufferedWriter salida = new BufferedWriter(new FileWriter(fichero));
 		Set<String> keys = Gestion.mapaAlumnos.keySet();
@@ -154,16 +172,31 @@ public abstract class Personas implements Constantes{
 		salida.close();
 	}
 	
+	/**
+	 * Metodo que muestra mediante el paquete swing el contenido del expediente del alumno
+	 */
 	
 	public static void mostrarPantalla(){
 		Set<String> keys = Gestion.mapaAlumnos.keySet();
-		JPanelBackground  panel = new JPanelBackground();
-		panel.setBackground("fondo.png");
+		JPanel  panel = new JPanel();
 		panel.setLayout(new GridLayout(0, 3, 0, 0 ));
-		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		JFrame ventana =  new JFrame();
 		for(String key:keys){
-			mostrarPantallaGeneral(key, Gestion.mapaAlumnos, "alumno", panel);
+			panel.add(new JLabel("DNI"));
+			panel.add(new JLabel(key));
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel("Nombre:"));
+			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getNombre()));
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel("Apellidos:"));
+			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getApellidos()));
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel("Perfil:"));
+			panel.add(new JLabel("Alumno"));
+			panel.add(new JLabel(" "));
+			panel.add(new JLabel("Fecha de nacimiento:"));
+			panel.add(new JLabel(Gestion.mapaAlumnos.get(key).getFechaNacimiento()));
+			panel.add(new JLabel(" "));
 			panel.add(new JLabel("Fecha de Ingreso:"));
 			panel.add(new JLabel(((Alumno)Gestion.mapaAlumnos.get(key)).getFechaIngreso()));
 			panel.add(new JLabel(" "));
@@ -193,42 +226,6 @@ public abstract class Personas implements Constantes{
 			panel.add(new JLabel(" "));
 			panel.add(new JLabel(" "));
 		}
-		
-		keys = Gestion.mapaProfesores.keySet();
-		for(String key : keys){
-			mostrarPantallaGeneral(key, Gestion.mapaProfesores, "profesor", panel);
-			panel.add(new JLabel("Departamento:"));
-			panel.add(new JLabel(((Profesor)Gestion.mapaProfesores.get(key)).getDepartamento()));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Categoria:"));
-			panel.add(new JLabel(((Profesor)Gestion.mapaProfesores.get(key)).getCategoria()));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Horas Asignables:"));
-			panel.add(new JLabel(Integer.toString(((Profesor)Gestion.mapaProfesores.get(key)).getHorasAsignables())));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel("Docencia Impartida:"));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel(" "));
-			LinkedHashMap<Integer, Asignatura> mapa = ((Profesor)Gestion.mapaProfesores.get(key)).getDocenciaImpartida();
-			Set<Integer> keys1 = mapa.keySet();
-			for(int key1 : keys1){
-				panel.add(new JLabel(" "));
-				panel.add(new JLabel(Gestion.mapaAsignaturas.get(key1).getNombre()));
-				String aux = " ";
-				for(int i = 0; i<mapa.get(key1).getGrupos().size(); i++){
-					if(i!=0)
-						aux+= ";";
-					aux += Integer.toString(mapa.get(key1).getGrupos().get(i).getIdentificador())+mapa.get(key1).getGrupos().get(i).getTipo();
-				}
-				panel.add(new JLabel(aux));
-			}
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel(" "));
-			panel.add(new JLabel(" "));
-		}
 		JScrollPane impresion = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ventana.setSize(1080, 720);
@@ -237,23 +234,4 @@ public abstract class Personas implements Constantes{
 		ventana.setResizable(false);
 		ventana.setVisible(true);
 	}
-	
-	public static void mostrarPantallaGeneral(String key, LinkedHashMap<String, Persona> mapa, String perfil, JPanel panel){
-		panel.add(new JLabel("DNI"));
-		panel.add(new JLabel(key));
-		panel.add(new JLabel(" "));
-		panel.add(new JLabel("Nombre:"));
-		panel.add(new JLabel(mapa.get(key).getNombre()));
-		panel.add(new JLabel(" "));
-		panel.add(new JLabel("Apellidos:"));
-		panel.add(new JLabel(mapa.get(key).getApellidos()));
-		panel.add(new JLabel(" "));
-		panel.add(new JLabel("Perfil:"));
-		panel.add(new JLabel("Alumno"));
-		panel.add(new JLabel(" "));
-		panel.add(new JLabel("Fecha de nacimiento:"));
-		panel.add(new JLabel(mapa.get(key).getFechaNacimiento()));
-		panel.add(new JLabel(" "));
-	}
-	
 }

@@ -16,10 +16,15 @@ public class Gestion implements Constantes{
 	static LinkedHashMap<String, Persona> mapaProfesores = new LinkedHashMap<String, Persona>();
 	static LinkedHashMap<Integer, Asignatura> mapaAsignaturas = new LinkedHashMap<Integer, Asignatura>();
 	
+	/**
+	 * Metodo que gestiona el resto de la aplicacion
+	 * @param args parametros que se pasan por linea de comandos
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
+	
 	public static void main(String[] args) throws IOException{
 		Personas.poblar();
 		Asignaturas.poblar();
-		Personas.mostrarPantalla();
 		File ejecucion = new File("ejecucion.txt");
 		if(!ejecucion.exists()){
 			
@@ -34,66 +39,77 @@ public class Gestion implements Constantes{
 				aviso("Nueva Ejecucion:\t"+formatoFecha.format(fechaActual.getTime())+"\n");
 			Scanner entradaInstrucciones = new Scanner(new FileInputStream("ejecucion.txt"));
 			while(entradaInstrucciones.hasNext()){
-				String instruccion = entradaInstrucciones.nextLine();
-				if(instruccion.charAt(0)=='*')
-					continue;
-				String[] token = instruccion.trim().split("\\s+");
-				switch(token[0]){
-					case "InsertaPersona":
-						aviso(insertaPersona);
-						if(token[1].trim().equals("alumno"))
-							Personas.añadir(instruccion, mapaAlumnos);
-						else
-							Personas.añadir(instruccion, mapaProfesores);
-						break;
-					case "AsignaCoordinador":
-						aviso(asignaCoordinador);
-						Asignaturas.asignarCoordinador(instruccion.trim().split("\\s+"));
-						break;
-					case "AsignaCargaDocente":
-						aviso(asignaCargaDocente);
-						Profesores.asignarCargaDocente(instruccion.trim().split("\\s+"));
-						break;
-					case "Matricula":
-						aviso(matricularAlumno);
-						Alumnos.matricular(instruccion.trim().split("\\s+"));
-						break;
-					case "AsignaGrupo":
-						aviso(asignaGrupo);
-						Alumnos.asignarGrupo(instruccion.trim().split("\\s+"));
-						break;
-					case "Evalua":
-						aviso(evaluarAsignatura);
-						Alumnos.evaluarAsignatura(instruccion.trim().split("\\s+"));
-						break;
-					case "Expediente":
-						aviso(expedienteAlumno);
-						Alumnos.obtenerExpediente(instruccion.trim().split("\\s+"));
-						break;
-					case "ObtenerCalendarioClases":
-						aviso(calendarioProfesor);
-						Profesores.obtenerCalendario(instruccion.trim().split("\\s+"));
-						break;
-					case "OrdenaAlumnosXNota":
-						aviso(ordenaAlumnosNota);
-						Alumnos.ordenarXNota(instruccion.trim().split("\\s+"));
-						break;
-					case "InsertaAsignatura":
-						aviso(insertaAsignatura);
-						Asignaturas.añadir(instruccion);
-						break;
-					default:
-						aviso(cIncorrecto);
-						break;
+				try {
+					String instruccion = entradaInstrucciones.nextLine();
+					if(instruccion.charAt(0)=='*')
+						continue;
+					String[] token = instruccion.trim().split("\\s+");
+					switch(token[0].toLowerCase()){
+						case "insertapersona":
+							aviso(insertaPersona);
+							if(token[1].trim().equals("alumno"))
+								Personas.anadir(instruccion, mapaAlumnos);
+							else
+								Personas.anadir(instruccion, mapaProfesores);
+							break;
+						case "asignacordinador":
+							aviso(asignaCoordinador);
+							Asignaturas.asignarCoordinador(instruccion.trim().split("\\s+"));
+							break;
+						case "asignacargadocente":
+							aviso(asignaCargaDocente);
+							Profesores.asignarCargaDocente(instruccion.trim().split("\\s+"));
+							break;
+						case "matricula":
+							aviso(matricularAlumno);
+							Alumnos.matricular(instruccion.trim().split("\\s+"));
+							break;
+						case "asignagrupo":
+							aviso(asignaGrupo);
+							Alumnos.asignarGrupo(instruccion.trim().split("\\s+"));
+							break;
+						case "evalua":
+							aviso(evaluarAsignatura);
+							Alumnos.evaluarAsignatura(instruccion.trim().split("\\s+"));
+							break;
+						case "expediente":
+							aviso(expedienteAlumno);
+							Alumnos.obtenerExpediente(instruccion.trim().split("\\s+"));
+							break;
+						case "obtenercalendarioclases":
+							aviso(calendarioProfesor);
+							Profesores.obtenerCalendario(instruccion.trim().split("\\s+"));
+							break;
+						case "ordenaalumnosxnota":
+							aviso(ordenaAlumnosNota);
+							Alumnos.ordenarXNota(instruccion.trim().split("\\s+"));
+							break;
+						case "insertaasignatura":
+							aviso(insertaAsignatura);
+							Asignaturas.anadir(instruccion);
+							break;
+						default:
+							aviso(cIncorrecto);
+							break;
+					}
+					aviso("\n");
+				} catch(Exception a){
+					
 				}
-				aviso("\n");
 				
 			}
 			entradaInstrucciones.close();
 		}
 		//Personas.imprimir();
 		//Asignaturas.imprimir();
+		Personas.mostrarPantalla();
 	}
+	
+	/**
+	 * Metodo que escribe el parametro recibido aviso en el fichero avisos
+	 * @param aviso variable tipo String que se imprime en el fichero avisos
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	
 	public static void aviso(String aviso)throws IOException{
 		File fichero =new File("avisos.txt");
@@ -108,6 +124,12 @@ public class Gestion implements Constantes{
 		 }
 		return;
 	}
+	
+	/**
+	 * Metodo que recibe una variable tipo String en formato dd/MM/aaaa y retorna ese string pasandolo a tipo calendar
+	 * @param string variable tipo String que se quiere convertir a calendar
+	 * @return Calendar variable tipo Calendar resultado de convertir el String
+	 */
 	
 	public static Calendar stringToCalendar(String string){
 		String[] auxiliar = string.trim().split("/");

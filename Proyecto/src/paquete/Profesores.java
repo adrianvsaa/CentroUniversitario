@@ -3,6 +3,13 @@ package paquete;
 import java.io.IOException;
 
 public class Profesores implements Constantes{
+	
+	/**
+	 * Metodo que recibe unos datos y comprueba si son correctos y en el caso de ser correctos llama al metodo obtenerCalendario del profesor
+	 * @param instruccion variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
+	
 	public static void obtenerCalendario(String[] instruccion)throws IOException{
 		if(instruccion.length!=3){
 			Gestion.aviso(nComandos);
@@ -20,6 +27,13 @@ public class Profesores implements Constantes{
 			Gestion.aviso("OK");
 		}
 	}
+	
+	/**
+	 * Metodo que recibe unos parametros y comprueba si son correctos y en el caso de ser correctos llama al metodo que addDocencia de
+	 * la clase profesor
+	 * @param comando variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	
 	public static void asignarCargaDocente(String[] comando)throws IOException{
 		if(comando.length!=5){

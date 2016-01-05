@@ -5,11 +5,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Alumnos implements Constantes{
+	/**
+	 * Metodo que recibe una instruccion, comprueba que los parametros sean correctos y en caso de que lo sean imprime un mapa de alumnos
+	 * en un fichero de forma que los alumnos esten ordenados por nota y apellidos
+	 * @param instruccion variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	public static void ordenarXNota(String[] instruccion) throws IOException{
 		if(instruccion.length!= 2){
 			Gestion.aviso(nComandos);
@@ -29,6 +34,13 @@ public class Alumnos implements Constantes{
 		Gestion.aviso("OK");
 		return;
 	}
+	
+	/**
+	 * Metodo que recibe una instruccion, comprueba que los datos de la instruccion sean correctos y en caso de serlo llama al metodo matricula
+	 * para el objeto alumno
+	 * @param comando variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	
 	public static void matricular(String[] comando) throws IOException{
 		if(comando.length!=3) {
@@ -51,6 +63,13 @@ public class Alumnos implements Constantes{
 		else { ((Alumno)Gestion.mapaAlumnos.get(dni)).matricula(new Asignatura(Asignaturas.siglasToIdentificador(siglas)));
 		Gestion.aviso("OK");}
 	}
+	
+	/**
+	 * Metodo que recibe una instruccion, comprueba que los datos de la instruccion sean correctos y en caso de serlo llama al metodo asignaGrupo
+	 * para el objeto alumno
+	 * @param comando variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	
 	public static void asignarGrupo(String[] comando)throws IOException{
 		if(comando.length!=5) {
@@ -83,7 +102,7 @@ public class Alumnos implements Constantes{
 			Gestion.aviso(gInex);
 		
 		else if(!GestionErrores.comprobarSolapeAlumno((Alumno)Gestion.mapaAlumnos.get(dni), Gestion.mapaAsignaturas.get(Asignaturas.siglasToIdentificador(siglas)),
-				Gestion.mapaAsignaturas, tipoGrupo, grupo))
+				tipoGrupo, grupo))
 			Gestion.aviso(solape);
 		
 		else if(GestionErrores.comprobarGrupo(Asignaturas.siglasToIdentificador(siglas), tipoGrupo, (Alumno)Gestion.mapaAlumnos.get(dni)))
@@ -96,6 +115,12 @@ public class Alumnos implements Constantes{
 		}
 	}
 	
+	/**
+	 * Metodo que recibe una instruccion, comprueba que los datos de la instruccion sean correctos y en caso de serlo se evalua una asignatura
+	 * del alumno
+	 * @param comando variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	
 	public static void evaluarAsignatura(String[] comando) throws IOException{
 		if(comando.length!=4){
@@ -114,8 +139,15 @@ public class Alumnos implements Constantes{
 			Gestion.aviso(yaEvaluada);
 		
 		else 
-			GestionErrores.comprobarFicheroNotas(Gestion.mapaAlumnos, notas, Asignaturas.siglasToIdentificador(siglas),	cursoAcademico);
+			GestionErrores.comprobarFicheroNotas(notas, Asignaturas.siglasToIdentificador(siglas),	cursoAcademico);
 	}
+	
+	/**
+	 * Metodo que recibe una instruccion, comprueba que los datos de la instruccion sean correctos y en caso de serlo llama al metodo
+	 * expediente del objeto alumno
+	 * @param comando variable que contiene la operacion que se desea ejecutar
+	 * @throws IOException excepcion en caso de error en salida de datos
+	 */
 	
 	
 	public static void obtenerExpediente(String[] comando) throws IOException{
